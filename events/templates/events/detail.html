@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ event.name }} | QDesk</title>
+</head>
+
+<body>
+    <h1>{{ event.name }}</h1>
+    <p>
+        organization:{{ event.organization.name }}
+    </p>
+
+    <p>
+        Location:{{ event.location|default:"Not specified"}}
+
+    </p>
+    <P>
+        Token format: {{ event.token_prefix }}-001
+    </P>
+    <hr>
+    <h2> Queue</h2>
+    <p>No tokens generated yet</p>
+</body>
+</html>

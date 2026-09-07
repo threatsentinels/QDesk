@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Event | QDesk</title>
+</head>
+
+<body>
+    <h1>Create Event</h1>
+    <p>
+        Organization:
+        <strong>{{ organization.name }}</strong>
+
+    </p>
+
+    <form methid="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+        <button type="submit">
+            Create Event
+        </button>
+    </form>
+</body>
+
+</html>
