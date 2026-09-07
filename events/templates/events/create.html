@@ -1,29 +1,75 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create Event | QDesk</title>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}Create Event | QDesk{% endblock %}
 
-    <h1>Create Event</h1>
+{% block content %}
 
-    <p>
-        Organization:
-        <strong>{{ organization.name }}</strong>
-    </p>
+<main class="max-w-xl mx-auto px-6 py-16">
 
-    <form method="post">
+    <a
+        href="{% url 'organizations:detail' organization.id %}"
+        class="text-sm text-[#77736a] hover:underline"
+    >
+        ← {{ organization.name }}
+    </a>
+
+
+    <div class="mt-8">
+
+        <p class="text-sm uppercase tracking-widest text-[#77736a]">
+            New event
+        </p>
+
+        <h1 class="text-4xl font-bold tracking-tight mt-2">
+            Create an event
+        </h1>
+
+        <p class="text-[#77736a] mt-3">
+            Set up the event before opening its queue.
+        </p>
+
+    </div>
+
+
+    <form
+        method="post"
+        class="mt-10 space-y-6"
+    >
 
         {% csrf_token %}
 
-        {{ form.as_p }}
+        {% for field in form %}
 
-        <button type="submit">
-            Create Event
+            <div>
+
+                <label class="block text-sm font-semibold mb-2">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.errors %}
+
+                    <p class="text-sm text-red-700 mt-1">
+                        {{ field.errors }}
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+
+        <button
+            type="submit"
+            class="w-full py-3 bg-[#1c1c1a] text-white font-semibold hover:bg-[#33332f] transition"
+        >
+            Create event
         </button>
 
     </form>
 
-</body>
-</html>
+</main>
+
+{% endblock %}

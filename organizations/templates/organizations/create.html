@@ -1,19 +1,76 @@
-<!DOCTYPE html>
-<html>
-    <head>
-    <title>Create Organization | QDesk</title>
-</head>
+{% extends "base.html" %}
 
-<body>
-    <h1>Create Organization</h1>
-    <form method ="post" enctype="multipart/form-data">
+{% block title %}Create Organization | QDesk{% endblock %}
+
+{% block content %}
+
+<main class="max-w-xl mx-auto px-6 py-16">
+
+    <a
+        href="{% url 'organizations:list' %}"
+        class="text-sm text-[#77736a] hover:underline"
+    >
+        ← Organizations
+    </a>
+
+
+    <div class="mt-8">
+
+        <p class="text-sm uppercase tracking-widest text-[#77736a]">
+            New workspace
+        </p>
+
+        <h1 class="text-4xl font-bold tracking-tight mt-2">
+            Create an organization
+        </h1>
+
+        <p class="text-[#77736a] mt-3">
+            Your events and queues will live inside this organization.
+        </p>
+
+    </div>
+
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        class="mt-10 space-y-6"
+    >
+
         {% csrf_token %}
 
-        {{ form.as_p }}
-        <button type="submit">
-            Continue
+        {% for field in form %}
+
+            <div>
+
+                <label class="block text-sm font-semibold mb-2">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.errors %}
+
+                    <p class="text-sm text-red-700 mt-1">
+                        {{ field.errors }}
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+
+        <button
+            type="submit"
+            class="w-full py-3 bg-[#1c1c1a] text-white font-semibold hover:bg-[#33332f] transition"
+        >
+            Create organization
         </button>
+
     </form>
 
-</body>
-</html>
+</main>
+
+{% endblock %}

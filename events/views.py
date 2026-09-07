@@ -98,3 +98,44 @@ def event_detail(request, event_id):
             "average_service": average_service,
         }
     )
+
+
+
+def public_display(request, event_id):
+
+    event = get_object_or_404(
+        Event,
+        id=event_id,
+    )
+
+    tokens = event.tokens.order_by("number")
+
+    return render(
+        request,
+        "events/display.html",
+        {
+            "event": event,
+            "tokens": tokens,
+        },
+    )
+
+
+def public_display_partial(request, event_id):
+
+    event = get_object_or_404(
+        Event,
+        id=event_id,
+    )
+
+    tokens = event.tokens.order_by("number")
+
+    return render(
+        request,
+        "events/partials/display.html",
+        {
+            "event": event,
+            "tokens": tokens,
+        },
+    )
+
+

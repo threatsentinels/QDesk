@@ -1,0 +1,93 @@
+<div
+    id="display"
+    hx-get="{% url 'events:display_data' event.id %}"
+    hx-trigger="every 3s"
+    hx-target="#display"
+    hx-swap="outerHTML"
+>
+
+
+    {% for token in tokens %}
+
+        {% if token.status == "serving" %}
+
+            <div class="text-center">
+
+                <p class="text-sm uppercase tracking-[0.2em] text-[#777770]">
+                    Now serving
+                </p>
+
+                <p class="token text-[clamp(5rem,15vw,11rem)] font-bold leading-none mt-5">
+                    {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                </p>
+
+                {% if token.counter %}
+
+                    <p class="mt-5 text-xl text-[#555550]">
+                        Please go to
+                        <strong class="text-[#171717]">
+                            {{ token.counter.name }}
+                        </strong>
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    {% empty %}
+
+        <div class="text-center">
+
+            <p class="text-sm uppercase tracking-[0.2em] text-[#777770]">
+                Queue
+            </p>
+
+            <p class="text-4xl font-bold mt-5">
+                Waiting for the first call
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+
+    <div class="mt-16 pt-8 border-t border-[#deded8]">
+
+        <div class="flex items-center justify-between">
+
+            <div>
+
+                <p class="text-xs uppercase tracking-widest text-[#777770]">
+                    Waiting
+                </p>
+
+                <p class="text-sm text-[#777770] mt-1">
+                    Please keep your token ready.
+                </p>
+
+            </div>
+
+
+            <div class="flex gap-3 flex-wrap justify-end">
+
+                {% for token in tokens %}
+
+                    {% if token.status == "waiting" %}
+
+                        <span class="token text-xl font-semibold">
+                            {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                        </span>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

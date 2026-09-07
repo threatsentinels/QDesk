@@ -1,164 +1,279 @@
 <div id="dashboard">
 
     <!-- STATS -->
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <section class="grid grid-cols-2 md:grid-cols-4 border-y border-[#deded8]">
 
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <p class="text-sm text-slate-400">Total</p>
-            <p class="text-3xl font-bold mt-2">{{ total_tokens }}</p>
+        <div class="p-5 md:p-6 border-r border-[#deded8]">
+            <p class="text-xs uppercase tracking-wider text-[#777770]">
+                Total
+            </p>
+
+            <p class="token text-3xl font-bold mt-2">
+                {{ total_tokens }}
+            </p>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <p class="text-sm text-slate-400">Waiting</p>
-            <p class="text-3xl font-bold mt-2">{{ waiting_tokens }}</p>
+
+        <div class="p-5 md:p-6 md:border-r border-[#deded8]">
+            <p class="text-xs uppercase tracking-wider text-[#777770]">
+                Waiting
+            </p>
+
+            <p class="token text-3xl font-bold mt-2">
+                {{ waiting_tokens }}
+            </p>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <p class="text-sm text-slate-400">Serving</p>
-            <p class="text-3xl font-bold mt-2">{{ serving_tokens }}</p>
+
+        <div class="p-5 md:p-6 border-r border-[#deded8]">
+            <p class="text-xs uppercase tracking-wider text-[#777770]">
+                Serving
+            </p>
+
+            <p class="token text-3xl font-bold mt-2">
+                {{ serving_tokens }}
+            </p>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
-            <p class="text-sm text-slate-400">Finished</p>
-            <p class="text-3xl font-bold mt-2">{{ finished_tokens }}</p>
+
+        <div class="p-5 md:p-6">
+            <p class="text-xs uppercase tracking-wider text-[#777770]">
+                Finished
+            </p>
+
+            <p class="token text-3xl font-bold mt-2">
+                {{ finished_tokens }}
+            </p>
         </div>
 
     </section>
 
 
-    <div class="grid lg:grid-cols-3 gap-6">
+    <!-- MAIN -->
+    <div class="grid lg:grid-cols-3 gap-8 mt-8">
+
 
         <!-- LEFT -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="lg:col-span-2">
 
 
             <!-- NOW SERVING -->
-            <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <section class="border border-[#deded8] bg-white">
 
-                <div class="mb-6">
-                    <p class="text-sm text-slate-400">Current</p>
+                <div class="px-6 py-5 border-b border-[#deded8] flex items-center justify-between">
 
-                    <h2 class="text-xl font-semibold">
-                        Now Serving
-                    </h2>
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-[#777770]">
+                            Current
+                        </p>
+
+                        <h2 class="text-lg font-semibold mt-1">
+                            Now serving
+                        </h2>
+                    </div>
+
+                    {% if serving_tokens %}
+                        <span class="text-xs font-medium text-[#D94F30]">
+                            LIVE
+                        </span>
+                    {% endif %}
+
                 </div>
 
 
-                {% for token in tokens %}
+                <div class="p-8 md:p-12">
 
-                    {% if token.status == "serving" %}
+                    {% for token in tokens %}
 
-                        <div class="bg-slate-800 rounded-xl p-6 text-center">
+                        {% if token.status == "serving" %}
 
-                            <p class="text-sm text-slate-400">
-                                Token
-                            </p>
+                            <div class="text-center">
 
-                            <p class="text-6xl font-bold tracking-tight mt-2">
-                                {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
-                            </p>
+                                <p class="text-xs uppercase tracking-[0.2em] text-[#777770]">
+                                    Token
+                                </p>
 
-                            <p class="text-slate-400 mt-3">
-                                Currently being served
-                            </p>
+                                <p class="token text-6xl md:text-8xl font-bold tracking-tight mt-4">
+                                    {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                                </p>
 
-                            <form
-                                hx-post="{% url 'tokens:finish' token.id %}"
-                                hx-target="#dashboard"
-                                hx-swap="outerHTML"
-                                class="mt-6"
-                            >
 
-                                {% csrf_token %}
+                                {% if token.counter %}
 
-                                <button
-                                    type="submit"
-                                    class="px-6 py-3 rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition"
+                                    <p class="mt-5 text-[#555550]">
+                                        Serving at
+                                        <strong class="text-[#171717]">
+                                            {{ token.counter.name }}
+                                        </strong>
+                                    </p>
+
+                                {% else %}
+
+                                    <p class="mt-5 text-sm text-[#777770]">
+                                        Currently being served
+                                    </p>
+
+                                {% endif %}
+
+
+                                <form
+                                    hx-post="{% url 'tokens:finish' token.id %}"
+                                    hx-target="#dashboard"
+                                    hx-swap="outerHTML"
+                                    class="mt-8"
                                 >
-                                    Finish Token
-                                </button>
 
-                            </form>
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="q-button"
+                                    >
+                                        Finish token
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    {% if serving_tokens == 0 %}
+
+                        <div class="text-center py-8">
+
+                            <p class="text-lg font-medium">
+                                No token is being served
+                            </p>
+
+                            {% if waiting_tokens %}
+
+                                <p class="text-sm text-[#777770] mt-2">
+                                    {{ waiting_tokens }}
+                                    token{{ waiting_tokens|pluralize }}
+                                    waiting in the queue.
+                                </p>
+
+                            {% else %}
+
+                                <p class="text-sm text-[#777770] mt-2">
+                                    Generate a token to start the queue.
+                                </p>
+
+                            {% endif %}
 
                         </div>
 
                     {% endif %}
 
-                {% empty %}
-
-                    <div class="text-center py-10 text-slate-500">
-                        No token is currently being served.
-                    </div>
-
-                {% endfor %}
+                </div>
 
             </section>
 
 
             <!-- QUEUE -->
-            <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <section class="border border-[#deded8] bg-white mt-8">
 
-                <div class="mb-6">
+                <div class="px-6 py-5 border-b border-[#deded8]">
 
-                    <p class="text-sm text-slate-400">
+                    <p class="text-xs uppercase tracking-wider text-[#777770]">
                         Tokens
                     </p>
 
-                    <h2 class="text-xl font-semibold">
+                    <h2 class="text-lg font-semibold mt-1">
                         Queue
                     </h2>
 
                 </div>
 
 
-                <div class="space-y-2">
+                {% if tokens %}
 
-                    {% for token in tokens %}
+                    <div>
 
-                        <div class="flex items-center justify-between bg-slate-800/60 rounded-lg px-4 py-3">
+                        {% for token in tokens %}
 
-                            <span class="font-semibold">
-                                {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
-                            </span>
+                            <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-[#eeeeea] last:border-b-0">
+
+                                <div class="flex items-center gap-4">
+
+                                    <span class="token text-base font-semibold">
+                                        {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                                    </span>
 
 
-                            {% if token.status == "waiting" %}
+                                    {% if token.status == "waiting" %}
 
-                                <span class="text-sm text-amber-400">
-                                    Waiting
-                                </span>
+                                        <span class="text-xs text-[#777770]">
+                                            Waiting
+                                        </span>
 
-                            {% elif token.status == "serving" %}
+                                    {% elif token.status == "serving" %}
 
-                                <span class="text-sm text-blue-400">
-                                    Serving
-                                </span>
+                                        <span class="text-xs font-medium text-[#D94F30]">
+                                            Serving
+                                        </span>
 
-                            {% elif token.status == "finished" %}
+                                    {% elif token.status == "finished" %}
 
-                                <span class="text-sm text-emerald-400">
-                                    Finished
-                                </span>
+                                        <span class="text-xs text-[#777770]">
+                                            Finished
+                                        </span>
 
-                            {% else %}
+                                    {% else %}
 
-                                <span class="text-sm text-slate-400">
-                                    {{ token.get_status_display }}
-                                </span>
+                                        <span class="text-xs text-[#999990]">
+                                            {{ token.get_status_display }}
+                                        </span>
 
-                            {% endif %}
+                                    {% endif %}
 
-                        </div>
+                                </div>
 
-                    {% empty %}
 
-                        <p class="text-slate-500 text-center py-6">
+                                <div class="flex items-center gap-4">
+
+                                    {% if token.counter %}
+
+                                        <span class="hidden sm:block text-xs text-[#777770]">
+                                            {{ token.counter.name }}
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    <!-- PRINT -->
+                                    <a
+                                        href="{% url 'tokens:print' token.id %}"
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="text-xs font-medium text-[#555550] hover:text-[#D94F30] transition"
+                                    >
+                                        Print
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="px-6 py-12 text-center">
+
+                        <p class="text-sm text-[#777770]">
                             No tokens generated yet.
                         </p>
 
-                    {% endfor %}
+                    </div>
 
-                </div>
+                {% endif %}
 
             </section>
 
@@ -166,22 +281,26 @@
 
 
         <!-- RIGHT -->
-        <div class="space-y-6">
+        <aside class="space-y-8">
 
 
-            <!-- QUEUE CONTROL -->
-            <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <!-- CONTROLS -->
+            <section class="border border-[#deded8] bg-white">
 
-                <h2 class="text-xl font-semibold">
-                    Queue Control
-                </h2>
+                <div class="px-6 py-5 border-b border-[#deded8]">
 
-                <p class="text-sm text-slate-400 mt-1 mb-6">
-                    Manage the queue
-                </p>
+                    <p class="text-xs uppercase tracking-wider text-[#777770]">
+                        Controls
+                    </p>
+
+                    <h2 class="text-lg font-semibold mt-1">
+                        Queue control
+                    </h2>
+
+                </div>
 
 
-                <div class="space-y-3">
+                <div class="p-6 space-y-3">
 
 
                     <!-- GENERATE -->
@@ -195,9 +314,9 @@
 
                         <button
                             type="submit"
-                            class="w-full py-3 rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition"
+                            class="q-button w-full"
                         >
-                            Generate Token
+                            Generate token
                         </button>
 
                     </form>
@@ -214,9 +333,12 @@
 
                         <button
                             type="submit"
-                            class="w-full py-3 rounded-lg border border-slate-700 font-semibold hover:bg-slate-800 transition"
+                            class="q-button-secondary w-full"
+                            {% if serving_tokens %}
+                                disabled
+                            {% endif %}
                         >
-                            Call Next
+                            Call next
                         </button>
 
                     </form>
@@ -227,37 +349,65 @@
 
 
             <!-- PERFORMANCE -->
-            <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <section class="border border-[#deded8] bg-white">
 
-                <h2 class="text-xl font-semibold">
-                    Performance
-                </h2>
+                <div class="px-6 py-5 border-b border-[#deded8]">
+
+                    <p class="text-xs uppercase tracking-wider text-[#777770]">
+                        Performance
+                    </p>
+
+                    <h2 class="text-lg font-semibold mt-1">
+                        Queue metrics
+                    </h2>
+
+                </div>
 
 
-                <div class="mt-6 space-y-5">
+                <div>
 
-                    <div>
+                    <div class="px-6 py-5 border-b border-[#eeeeea]">
 
-                        <p class="text-sm text-slate-400">
+                        <p class="text-xs text-[#777770]">
                             Average wait
                         </p>
 
-                        <p class="font-semibold mt-1">
-                            {{ average_wait|default:"No data yet" }}
-                        </p>
+                        {% if average_wait %}
+
+                            <p class="token text-xl font-semibold mt-2">
+                                {{ average_wait }}
+                            </p>
+
+                        {% else %}
+
+                            <p class="text-sm text-[#999990] mt-2">
+                                No data yet
+                            </p>
+
+                        {% endif %}
 
                     </div>
 
 
-                    <div>
+                    <div class="px-6 py-5">
 
-                        <p class="text-sm text-slate-400">
+                        <p class="text-xs text-[#777770]">
                             Average service
                         </p>
 
-                        <p class="font-semibold mt-1">
-                            {{ average_service|default:"No data yet" }}
-                        </p>
+                        {% if average_service %}
+
+                            <p class="token text-xl font-semibold mt-2">
+                                {{ average_service }}
+                            </p>
+
+                        {% else %}
+
+                            <p class="text-sm text-[#999990] mt-2">
+                                No data yet
+                            </p>
+
+                        {% endif %}
 
                     </div>
 
@@ -265,7 +415,39 @@
 
             </section>
 
-        </div>
+
+            <!-- PUBLIC DISPLAY -->
+            <section class="border border-[#deded8] bg-[#171717] text-white">
+
+                <div class="p-6">
+
+                    <p class="text-xs uppercase tracking-wider text-[#999990]">
+                        Public screen
+                    </p>
+
+                    <h2 class="text-lg font-semibold mt-1">
+                        Queue display
+                    </h2>
+
+                    <p class="text-sm text-[#aaa] mt-2 leading-relaxed">
+                        Open the public display on a TV, monitor or second device.
+                    </p>
+
+
+                    <a
+                        href="{% url 'events:display' event.id %}"
+                        target="_blank"
+                        rel="noopener"
+                        class="inline-flex items-center justify-center mt-5 px-4 py-2.5 bg-white text-[#171717] text-sm font-semibold hover:bg-[#D94F30] hover:text-white transition"
+                    >
+                        Open display →
+                    </a>
+
+                </div>
+
+            </section>
+
+        </aside>
 
     </div>
 

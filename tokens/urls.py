@@ -1,9 +1,16 @@
+
+
+
 from django.urls import path
+
 from . import views
+
 
 app_name = "tokens"
 
+
 urlpatterns = [
+
     path(
         "generate/<int:event_id>/",
         views.generate_token,
@@ -21,4 +28,11 @@ urlpatterns = [
         views.finish_token,
         name="finish",
     ),
+
+    path(
+        "print/<int:token_id>/",
+        views.print_token,
+        name="print",
+    ),
+
 ]

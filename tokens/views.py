@@ -153,3 +153,19 @@ def finish_token(request, token_id):
         "events:detail",
         event_id=token.event.id
     )
+
+def print_token(request, token_id):
+
+    token = get_object_or_404(
+        Token,
+        id=token_id,
+    )
+
+    return render(
+        request,
+        "tokens/print.html",
+        {
+            "token": token,
+            "event": token.event,
+        },
+    )

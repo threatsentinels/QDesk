@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}QDesk — Simple Queue Management{% endblock %}
+
+{% block content %}
+
+<main>
+
+    <section class="max-w-6xl mx-auto px-6 pt-24 pb-20">
+
+        <div class="max-w-3xl">
+
+            <p class="text-sm uppercase tracking-[0.2em] text-[#77736a]">
+                Queue management
+            </p>
+
+            <h1 class="text-6xl md:text-7xl font-bold tracking-tight leading-[0.95] mt-5">
+                Stop shouting
+                <br>
+                token numbers.
+            </h1>
+
+            <p class="text-xl text-[#666158] max-w-xl mt-8 leading-relaxed">
+                QDesk gives events, offices and service desks a simple way
+                to issue tokens, manage queues and keep things moving.
+            </p>
+
+
+            <div class="mt-10 flex flex-wrap gap-3">
+
+                <a
+                    href="{% url 'organizations:list' %}"
+                    class="px-6 py-3 bg-[#1c1c1a] text-white font-semibold hover:bg-[#33332f] transition"
+                >
+                    Get started →
+                </a>
+
+                <a
+                    href="#how"
+                    class="px-6 py-3 border border-[#bdb7ab] font-semibold hover:border-[#1c1c1a] transition"
+                >
+                    How it works
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section
+        id="how"
+        class="border-y border-[#d8d3c8] bg-[#ebe7de]"
+    >
+
+        <div class="max-w-6xl mx-auto px-6 py-16">
+
+            <p class="text-sm uppercase tracking-widest text-[#77736a]">
+                Three steps
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-10 mt-8">
+
+                <div>
+
+                    <p class="font-mono text-sm text-[#77736a]">
+                        01
+                    </p>
+
+                    <h2 class="text-xl font-bold mt-3">
+                        Create an organization
+                    </h2>
+
+                    <p class="text-[#666158] mt-2 leading-relaxed">
+                        Set up a workspace for your event or organization.
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <p class="font-mono text-sm text-[#77736a]">
+                        02
+                    </p>
+
+                    <h2 class="text-xl font-bold mt-3">
+                        Create an event
+                    </h2>
+
+                    <p class="text-[#666158] mt-2 leading-relaxed">
+                        Configure your event and its token numbering.
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <p class="font-mono text-sm text-[#77736a]">
+                        03
+                    </p>
+
+                    <h2 class="text-xl font-bold mt-3">
+                        Run the queue
+                    </h2>
+
+                    <p class="text-[#666158] mt-2 leading-relaxed">
+                        Generate tokens, call people and track the queue live.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="max-w-6xl mx-auto px-6 py-20">
+
+        <div class="border border-[#cfc9bd] bg-[#faf8f3] p-8 md:p-12">
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+
+                <div>
+
+                    <p class="font-mono text-sm text-[#77736a]">
+                        QDESK
+                    </p>
+
+                    <h2 class="text-3xl font-bold mt-2">
+                        Ready to run your first queue?
+                    </h2>
+
+                </div>
+
+
+                <a
+                    href="{% url 'organizations:list' %}"
+                    class="px-6 py-3 bg-[#1c1c1a] text-white font-semibold text-center"
+                >
+                    Open QDesk →
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}
