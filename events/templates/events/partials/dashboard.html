@@ -1,0 +1,272 @@
+<div id="dashboard">
+
+    <!-- STATS -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+            <p class="text-sm text-slate-400">Total</p>
+            <p class="text-3xl font-bold mt-2">{{ total_tokens }}</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+            <p class="text-sm text-slate-400">Waiting</p>
+            <p class="text-3xl font-bold mt-2">{{ waiting_tokens }}</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+            <p class="text-sm text-slate-400">Serving</p>
+            <p class="text-3xl font-bold mt-2">{{ serving_tokens }}</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+            <p class="text-sm text-slate-400">Finished</p>
+            <p class="text-3xl font-bold mt-2">{{ finished_tokens }}</p>
+        </div>
+
+    </section>
+
+
+    <div class="grid lg:grid-cols-3 gap-6">
+
+        <!-- LEFT -->
+        <div class="lg:col-span-2 space-y-6">
+
+
+            <!-- NOW SERVING -->
+            <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+
+                <div class="mb-6">
+                    <p class="text-sm text-slate-400">Current</p>
+
+                    <h2 class="text-xl font-semibold">
+                        Now Serving
+                    </h2>
+                </div>
+
+
+                {% for token in tokens %}
+
+                    {% if token.status == "serving" %}
+
+                        <div class="bg-slate-800 rounded-xl p-6 text-center">
+
+                            <p class="text-sm text-slate-400">
+                                Token
+                            </p>
+
+                            <p class="text-6xl font-bold tracking-tight mt-2">
+                                {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                            </p>
+
+                            <p class="text-slate-400 mt-3">
+                                Currently being served
+                            </p>
+
+                            <form
+                                hx-post="{% url 'tokens:finish' token.id %}"
+                                hx-target="#dashboard"
+                                hx-swap="outerHTML"
+                                class="mt-6"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="px-6 py-3 rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition"
+                                >
+                                    Finish Token
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    {% endif %}
+
+                {% empty %}
+
+                    <div class="text-center py-10 text-slate-500">
+                        No token is currently being served.
+                    </div>
+
+                {% endfor %}
+
+            </section>
+
+
+            <!-- QUEUE -->
+            <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+
+                <div class="mb-6">
+
+                    <p class="text-sm text-slate-400">
+                        Tokens
+                    </p>
+
+                    <h2 class="text-xl font-semibold">
+                        Queue
+                    </h2>
+
+                </div>
+
+
+                <div class="space-y-2">
+
+                    {% for token in tokens %}
+
+                        <div class="flex items-center justify-between bg-slate-800/60 rounded-lg px-4 py-3">
+
+                            <span class="font-semibold">
+                                {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                            </span>
+
+
+                            {% if token.status == "waiting" %}
+
+                                <span class="text-sm text-amber-400">
+                                    Waiting
+                                </span>
+
+                            {% elif token.status == "serving" %}
+
+                                <span class="text-sm text-blue-400">
+                                    Serving
+                                </span>
+
+                            {% elif token.status == "finished" %}
+
+                                <span class="text-sm text-emerald-400">
+                                    Finished
+                                </span>
+
+                            {% else %}
+
+                                <span class="text-sm text-slate-400">
+                                    {{ token.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% empty %}
+
+                        <p class="text-slate-500 text-center py-6">
+                            No tokens generated yet.
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- RIGHT -->
+        <div class="space-y-6">
+
+
+            <!-- QUEUE CONTROL -->
+            <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+
+                <h2 class="text-xl font-semibold">
+                    Queue Control
+                </h2>
+
+                <p class="text-sm text-slate-400 mt-1 mb-6">
+                    Manage the queue
+                </p>
+
+
+                <div class="space-y-3">
+
+
+                    <!-- GENERATE -->
+                    <form
+                        hx-post="{% url 'tokens:generate' event.id %}"
+                        hx-target="#dashboard"
+                        hx-swap="outerHTML"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="w-full py-3 rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition"
+                        >
+                            Generate Token
+                        </button>
+
+                    </form>
+
+
+                    <!-- CALL NEXT -->
+                    <form
+                        hx-post="{% url 'tokens:call_next' event.id %}"
+                        hx-target="#dashboard"
+                        hx-swap="outerHTML"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="w-full py-3 rounded-lg border border-slate-700 font-semibold hover:bg-slate-800 transition"
+                        >
+                            Call Next
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+            <!-- PERFORMANCE -->
+            <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+
+                <h2 class="text-xl font-semibold">
+                    Performance
+                </h2>
+
+
+                <div class="mt-6 space-y-5">
+
+                    <div>
+
+                        <p class="text-sm text-slate-400">
+                            Average wait
+                        </p>
+
+                        <p class="font-semibold mt-1">
+                            {{ average_wait|default:"No data yet" }}
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <p class="text-sm text-slate-400">
+                            Average service
+                        </p>
+
+                        <p class="font-semibold mt-1">
+                            {{ average_service|default:"No data yet" }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+</div>

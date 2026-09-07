@@ -1,12 +1,12 @@
-from django.urls import path 
-from . import views 
+from django.urls import path
+from . import views
 
-app_name ="organizations"
+app_name = "organizations"
 
 urlpatterns = [
     path(
         "create/",
         views.create_organization,
-        name="name",
-    )
+        name="create",
+    ),
 ]

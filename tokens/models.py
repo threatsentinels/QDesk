@@ -52,4 +52,4 @@ class Token(models.Model):
             )
         ]
     def __str__(self):
-        return f"{self.event.token_prefix}-{self.number}"
+        return f"{self.event.token_prefix}-{self.number:03d}"

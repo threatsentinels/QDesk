@@ -1,24 +1,412 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{{ event.name }} | QDesk</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
 
-<body>
-    <h1>{{ event.name }}</h1>
-    <p>
-        organization:{{ event.organization.name }}
-    </p>
 
-    <p>
-        Location:{{ event.location|default:"Not specified"}}
+<body class="bg-slate-950 text-slate-100 min-h-screen">
 
-    </p>
-    <P>
-        Token format: {{ event.token_prefix }}-001
-    </P>
-    <hr>
-    <h2> Queue</h2>
-    <p>No tokens generated yet</p>
+
+    <!-- HEADER -->
+    <header class="border-b border-slate-800">
+
+        <div class="max-w-6xl mx-auto px-6 py-6">
+
+            <div class="flex items-center justify-between">
+
+                <div>
+
+                    <h1 class="text-2xl font-bold tracking-tight">
+                        QDesk
+                    </h1>
+
+                    <p class="text-slate-400 mt-1">
+                        {{ event.organization.name }}
+                    </p>
+
+                </div>
+
+
+                <div class="text-right">
+
+                    <h2 class="font-semibold">
+                        {{ event.name }}
+                    </h2>
+
+                    {% if event.location %}
+
+                        <p class="text-sm text-slate-400">
+                            {{ event.location }}
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- MAIN -->
+    <main class="max-w-6xl mx-auto px-6 py-8">
+
+         {% include "events/partials/dashboard.html" %}
+        <!-- STATS -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+
+                <p class="text-sm text-slate-400">
+                    Total
+                </p>
+
+                <p class="text-3xl font-bold mt-2">
+                    {{ total_tokens }}
+                </p>
+
+            </div>
+
+
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+
+                <p class="text-sm text-slate-400">
+                    Waiting
+                </p>
+
+                <p class="text-3xl font-bold mt-2">
+                    {{ waiting_tokens }}
+                </p>
+
+            </div>
+
+
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+
+                <p class="text-sm text-slate-400">
+                    Serving
+                </p>
+
+                <p class="text-3xl font-bold mt-2">
+                    {{ serving_tokens }}
+                </p>
+
+            </div>
+
+
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+
+                <p class="text-sm text-slate-400">
+                    Finished
+                </p>
+
+                <p class="text-3xl font-bold mt-2">
+                    {{ finished_tokens }}
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- CONTENT -->
+        <div class="grid lg:grid-cols-3 gap-6">
+
+
+
+            <!-- LEFT COLUMN -->
+            <div class="lg:col-span-2 space-y-6">
+
+
+
+                <!-- NOW SERVING -->
+                <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+
+
+                    <div class="flex items-center justify-between mb-6">
+
+                        <div>
+
+                            <p class="text-sm text-slate-400">
+                                Current
+                            </p>
+
+                            <h2 class="text-xl font-semibold">
+                                Now Serving
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+
+                    {% for token in tokens %}
+
+                        {% if token.status == "serving" %}
+
+
+                            <div class="bg-slate-800 rounded-xl p-6 text-center">
+
+
+                                <p class="text-sm text-slate-400">
+                                    Token
+                                </p>
+
+
+                                <p class="text-6xl font-bold tracking-tight mt-2">
+
+                                    {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+
+                                </p>
+
+
+                                <p class="text-slate-400 mt-3">
+
+                                    Currently being served
+
+                                </p>
+
+
+
+                                <!-- FINISH -->
+                                <form
+                                    hx-post="{% url 'tokens:finish' token.id %}"
+                                    hx-target="#queue"
+                                    hx-swap="outerHTML"
+                                    class="mt-6"
+                                >
+
+                                    {% csrf_token %}
+
+
+                                    <button
+                                        type="submit"
+                                        class="px-6 py-3 rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition"
+                                    >
+
+                                        Finish Token
+
+                                    </button>
+
+                                </form>
+
+
+                            </div>
+
+
+                        {% endif %}
+
+                    {% empty %}
+
+
+                        <div class="text-center py-10 text-slate-500">
+
+                            No token is currently being served.
+
+                        </div>
+
+
+                    {% endfor %}
+
+
+                </section>
+
+
+
+                <!-- QUEUE -->
+                <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+
+
+                    <div class="flex items-center justify-between mb-6">
+
+                        <div>
+
+                            <p class="text-sm text-slate-400">
+                                Tokens
+                            </p>
+
+                            <h2 class="text-xl font-semibold">
+                                Queue
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div id="queue">
+
+                        {% include "events/partials/queue.html" %}
+
+                    </div>
+
+
+                </section>
+
+
+
+            </div>
+
+
+
+
+            <!-- RIGHT COLUMN -->
+            <div class="space-y-6">
+
+
+
+                <!-- QUEUE CONTROL -->
+                <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+
+
+                    <h2 class="text-xl font-semibold">
+                        Queue Control
+                    </h2>
+
+
+                    <p class="text-sm text-slate-400 mt-1 mb-6">
+                        Manage the queue
+                    </p>
+
+
+
+                    <div class="space-y-3">
+
+
+                        <!-- GENERATE -->
+                        <form
+                            hx-post="{% url 'tokens:generate' event.id %}"
+                            hx-target="#queue"
+                            hx-swap="outerHTML"
+                        >
+
+                            {% csrf_token %}
+
+
+                            <button
+                                type="submit"
+                                class="w-full py-3 rounded-lg bg-white text-slate-950 font-semibold hover:bg-slate-200 transition"
+                            >
+
+                                Generate Token
+
+                            </button>
+
+                        </form>
+
+
+
+                        <!-- CALL NEXT -->
+                        <form
+                            hx-post="{% url 'tokens:call_next' event.id %}"
+                            hx-target="#queue"
+                            hx-swap="outerHTML"
+                        >
+
+                            {% csrf_token %}
+
+
+                            <button
+                                type="submit"
+                                class="w-full py-3 rounded-lg border border-slate-700 font-semibold hover:bg-slate-800 transition"
+                            >
+
+                                Call Next
+
+                            </button>
+
+                        </form>
+
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- PERFORMANCE -->
+                <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+
+
+                    <h2 class="text-xl font-semibold">
+                        Performance
+                    </h2>
+
+
+
+                    <div class="mt-6 space-y-5">
+
+
+                        <div>
+
+                            <p class="text-sm text-slate-400">
+                                Average wait
+                            </p>
+
+
+                            <p class="font-semibold mt-1">
+
+                                {{ average_wait|default:"No data yet" }}
+
+                            </p>
+
+                        </div>
+
+
+
+                        <div>
+
+                            <p class="text-sm text-slate-400">
+                                Average service
+                            </p>
+
+
+                            <p class="font-semibold mt-1">
+
+                                {{ average_service|default:"No data yet" }}
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
 </body>
+
 </html>

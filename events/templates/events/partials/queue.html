@@ -1,0 +1,51 @@
+<div id="queue">
+
+    <div class="space-y-2">
+
+        {% for token in tokens %}
+
+            <div class="flex items-center justify-between bg-slate-800/60 rounded-lg px-4 py-3">
+
+                <span class="font-semibold">
+                    {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                </span>
+
+                {% if token.status == "waiting" %}
+
+                    <span class="text-sm text-amber-400">
+                        Waiting
+                    </span>
+
+                {% elif token.status == "serving" %}
+
+                    <span class="text-sm text-blue-400">
+                        Serving
+                    </span>
+
+                {% elif token.status == "finished" %}
+
+                    <span class="text-sm text-emerald-400">
+                        Finished
+                    </span>
+
+                {% else %}
+
+                    <span class="text-sm text-slate-400">
+                        {{ token.get_status_display }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        {% empty %}
+
+            <p class="text-slate-500 text-center py-6">
+                No tokens generated yet.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</div>

@@ -1,9 +1,8 @@
-from django import forms 
-from .models import Organization 
+from django import forms
+from .models import Organization
 
 
-class Organization(forms.ModelForm):
+class OrganizationForm(forms.ModelForm):
     class Meta:
-        model = Organization 
-        fields = ["name","logo"]
-        
+        model = Organization
+        fields = ["name", "logo"]

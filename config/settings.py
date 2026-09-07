@@ -25,7 +25,14 @@ SECRET_KEY = "django-insecure-!bd@^mu7z(r8*v@(7e5jpd#ms%v3)m2)=2k#d@*vnit9v#&bk3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost:8000",
+]
 
 
 # Application definition
@@ -131,3 +138,7 @@ MAILERS = {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
