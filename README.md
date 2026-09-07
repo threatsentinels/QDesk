@@ -1,89 +1,27 @@
-QDesk
+**QDesk**
 
-Queue management without the chaos.
+Standing around in a crowded room wondering which token just got called is pretty annoying. I built QDesk to fix that, making a simple web app for managing lines at events, service desks, pop-up clinics, and offices.
 
-QDesk started with a pretty simple idea: why are people still standing around asking which token is being called?
+You set up an event, issue tokens, call the next person up, and throw a display up on a screen so people actually know where they are in line.
 
-So I made a small web app for handling queues at events, service desks, health camps, offices, and basically anywhere people have to wait for their turn.
+The app supports multiple organizations, events, and counters. Tokens get custom prefixes, automatic numbering, and can be printed out. Staff get a real-time dashboard while visitors see a clean public display in the waiting room. Everything tracks token statuses through waiting, serving, finished, or cancelled, and gives you basic stats on wait times.
 
-You create an event, generate tokens, call people from the queue, and keep track of what's happening. There's also a separate public display for showing the current token.
+On the tech side, I split the backend into modular Django apps for organizations, events, counters, and tokens instead of stuffing everything into one giant views.py. The backend runs on Python, Django, and SQLite, while the frontend uses Django Templates and Tailwind CSS. HTMX handles the live updates so the page never has to fully reload when a token changes.
 
-Nothing too fancy. Just a queue that works.
-
-What it has
-
-- Organizations and events
-- Multiple counters
-- Custom token prefixes
-- Automatic token numbering
-- Queue dashboard
-- Call next / finish token
-- Token printing
-- Public display
-- Live updates
-- Basic waiting & service time stats
-
-The token flow is basically:
-
-WAITING → SERVING → FINISHED
-
-with cancellation when needed.
-
-A little tech
-
-It's built with Django, with HTMX handling the small live updates so the whole dashboard doesn't need to reload every time something happens.
-
-The frontend is mostly Django templates with Tailwind CSS.
-
-Current stack:
-
-Python
-Django
-HTMX
-Tailwind CSS
-SQLite
-
-The project is split into a few small Django apps instead of putting everything into one giant "views.py" and hoping for the best:
-
-organizations/
-events/
-counters/
-tokens/
-
-Running it
-
-If you want to try it locally:
+To run it locally:
 
 git clone https://github.com/threatsentinels/QDesk.git
 cd QDesk
 
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate (or venv\Scripts\activate on Windows)
 
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 
-Then open:
+Then open http://127.0.0.1:8000 in your browser.
 
-http://127.0.0.1:8000
+You can test the live build at https://qdesk.ggsrclub.com
 
-For Windows, activate the environment with:
-
-venv\Scripts\activate
-
-Demo
-
-The current deployment is available at:
-
-https://qdesk.ggsrclub.com
-
-What's next?
-
-There are still plenty of things I'd like to add.
-
-Better counter handling, authentication, proper reporting, a nicer public display, and probably a bunch of other things I'll think of after using it for a while.
-
-For now, it does what it was supposed to do.
-
-That's good enough.
+Down the road I want to add better auth, real reporting features, multi-counter routing, and cleaner display styles.
