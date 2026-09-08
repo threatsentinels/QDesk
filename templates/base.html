@@ -7,150 +7,763 @@
 
     <title>{% block title %}QDesk{% endblock %}</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
+        :root {
+            --paper: #f2f1ec;
+            --surface: #faf9f5;
+            --ink: #18202a;
+            --muted: #68707a;
+            --faint: #9ba0a5;
+            --line: #cfd0cc;
+            --line-dark: #9fa2a0;
+            --blue: #244b68;
+            --blue-dark: #19384f;
+            --red: #b33b2e;
+            --green: #35644b;
+        }
+
+        html {
+            background: var(--paper);
+        }
+
         body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--paper);
+            color: var(--ink);
             font-family:
                 Inter,
-                ui-sans-serif,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
                 "Segoe UI",
+                Arial,
                 sans-serif;
-
-            background: #f7f7f5;
-            color: #171717;
+            font-size: 15px;
         }
 
-        .token {
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .q-mono {
             font-family:
                 "SFMono-Regular",
+                "Cascadia Mono",
+                "Roboto Mono",
                 Consolas,
-                "Liberation Mono",
                 monospace;
-            letter-spacing: -0.04em;
+            font-variant-numeric: tabular-nums;
         }
 
-        .q-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
+        .q-shell {
+            width: min(1380px, calc(100% - 48px));
+            margin: 0 auto;
+        }
 
-            padding: 0.7rem 1rem;
+        /* -----------------------------
+           TOP BAR
+        ----------------------------- */
 
-            background: #171717;
+        .q-topbar {
+            height: 64px;
+            background: var(--ink);
             color: white;
-
-            border: 1px solid #171717;
-            border-radius: 5px;
-
-            font-size: 0.875rem;
-            font-weight: 600;
-
-            transition:
-                background 0.15s ease,
-                border-color 0.15s ease;
+            border-bottom: 3px solid var(--blue);
         }
 
-        .q-button:hover {
-            background: #d94f30;
-            border-color: #d94f30;
+        .q-topbar-inner {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .q-button-secondary {
+        .q-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .q-brand-mark {
+            width: 30px;
+            height: 30px;
+            border: 2px solid white;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .q-brand-name {
+            font-size: 18px;
+        }
+
+        .q-nav {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            font-size: 13px;
+        }
+
+        .q-nav a {
+            color: #c5cbd0;
+        }
+
+        .q-nav a:hover {
+            color: white;
+        }
+
+        /* -----------------------------
+           PAGE
+        ----------------------------- */
+
+        .q-page {
+            padding: 34px 0 60px;
+        }
+
+        .q-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 30px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--line-dark);
+        }
+
+        .q-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 10px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .q-breadcrumb a:hover {
+            color: var(--ink);
+        }
+
+        .q-breadcrumb-separator {
+            color: var(--faint);
+        }
+
+        .q-page-title-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .q-page-title {
+            margin: 0;
+            font-size: clamp(28px, 4vw, 42px);
+            line-height: 1;
+            letter-spacing: -0.045em;
+            font-weight: 800;
+        }
+
+        .q-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .q-status::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .q-status-live {
+            color: var(--green);
+        }
+
+        .q-status-off {
+            color: var(--muted);
+        }
+
+        .q-location {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .q-header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* -----------------------------
+           BUTTONS
+        ----------------------------- */
+
+        .q-btn {
+            min-height: 42px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-
-            padding: 0.7rem 1rem;
-
-            background: white;
-            color: #171717;
-
-            border: 1px solid #d8d8d2;
-            border-radius: 5px;
-
-            font-size: 0.875rem;
-            font-weight: 600;
-
+            gap: 8px;
+            padding: 0 15px;
+            border: 1px solid var(--ink);
+            background: var(--ink);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
             transition:
-                border-color 0.15s ease,
-                background 0.15s ease;
+                background 0.12s ease,
+                color 0.12s ease,
+                border-color 0.12s ease;
         }
 
-        .q-button-secondary:hover {
-            border-color: #171717;
-            background: #f4f4f1;
+        .q-btn:hover {
+            background: var(--blue);
+            border-color: var(--blue);
         }
 
-        .q-input {
-            width: 100%;
+        .q-btn-light {
+            background: var(--surface);
+            color: var(--ink);
+            border-color: var(--line-dark);
+        }
 
-            padding: 0.75rem 0.8rem;
-
+        .q-btn-light:hover {
             background: white;
-
-            border: 1px solid #d8d8d2;
-            border-radius: 5px;
-
-            outline: none;
-
-            font-size: 0.95rem;
+            border-color: var(--ink);
+            color: var(--ink);
         }
 
-        .q-input:focus {
-            border-color: #171717;
+        .q-btn-blue {
+            background: var(--blue);
+            border-color: var(--blue);
         }
+
+        .q-btn-blue:hover {
+            background: var(--blue-dark);
+            border-color: var(--blue-dark);
+        }
+
+        .q-btn-full {
+            width: 100%;
+        }
+
+        .q-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.38;
+        }
+
+        /* -----------------------------
+           META STRIP
+        ----------------------------- */
+
+        .q-meta {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .q-meta-item {
+            padding: 12px 26px 12px 0;
+            margin-right: 26px;
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+        }
+
+        .q-meta-item strong {
+            margin-left: 5px;
+            color: var(--ink);
+            font-weight: 700;
+        }
+
+        /* -----------------------------
+           DASHBOARD
+        ----------------------------- */
+
+        .q-dashboard {
+            padding-top: 24px;
+        }
+
+        .q-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 310px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* -----------------------------
+           MAIN SERVING AREA
+        ----------------------------- */
+
+        .q-panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+        }
+
+        .q-panel-head {
+            min-height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .q-panel-label {
+            margin: 0;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.13em;
+        }
+
+        .q-panel-title {
+            margin: 3px 0 0;
+            font-size: 16px;
+            font-weight: 750;
+            letter-spacing: -0.02em;
+        }
+
+        .q-live {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--red);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+        }
+
+        .q-live::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .q-current {
+            min-height: 390px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 45px 30px;
+        }
+
+        .q-current-inner {
+            width: 100%;
+        }
+
+        .q-current-label {
+            margin: 0;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+        }
+
+        .q-current-number {
+            margin: 14px 0 0;
+            font-family:
+                "SFMono-Regular",
+                "Cascadia Mono",
+                Consolas,
+                monospace;
+            font-size: clamp(64px, 10vw, 132px);
+            line-height: 0.95;
+            letter-spacing: -0.08em;
+            font-weight: 800;
+            color: var(--ink);
+        }
+
+        .q-current-counter {
+            margin: 20px 0 0;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .q-current-counter strong {
+            color: var(--ink);
+        }
+
+        .q-current-action {
+            margin-top: 25px;
+        }
+
+        /* -----------------------------
+           QUEUE
+        ----------------------------- */
+
+        .q-queue {
+            margin-top: 24px;
+        }
+
+        .q-queue-head {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .q-queue-count {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .q-token-row {
+            min-height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 0 20px;
+            border-bottom: 1px solid #dedfdb;
+        }
+
+        .q-token-row:last-child {
+            border-bottom: 0;
+        }
+
+        .q-token-left {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            min-width: 0;
+        }
+
+        .q-token-number {
+            min-width: 105px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        .q-token-status {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+
+        .q-token-status.serving {
+            color: var(--red);
+            font-weight: 800;
+        }
+
+        .q-token-status.finished {
+            color: var(--faint);
+        }
+
+        .q-token-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .q-counter-name {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .q-print {
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .q-print:hover {
+            text-decoration: underline;
+        }
+
+        .q-empty {
+            padding: 55px 25px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* -----------------------------
+           SIDEBAR
+        ----------------------------- */
+
+        .q-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .q-control {
+            padding: 18px;
+        }
+
+        .q-control + .q-control {
+            border-top: 1px solid var(--line);
+        }
+
+        .q-control-label {
+            margin: 0 0 12px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.13em;
+        }
+
+        .q-control-note {
+            margin: 10px 0 0;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .q-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .q-stat {
+            padding: 17px 18px;
+            border-right: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .q-stat:nth-child(2n) {
+            border-right: 0;
+        }
+
+        .q-stat:nth-last-child(-n+2) {
+            border-bottom: 0;
+        }
+
+        .q-stat-label {
+            color: var(--muted);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .q-stat-value {
+            margin-top: 6px;
+            font-family:
+                "SFMono-Regular",
+                "Cascadia Mono",
+                Consolas,
+                monospace;
+            font-size: 27px;
+            line-height: 1;
+            font-weight: 800;
+        }
+
+        .q-metric {
+            padding: 18px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .q-metric:last-child {
+            border-bottom: 0;
+        }
+
+        .q-metric-label {
+            color: var(--muted);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .q-metric-value {
+            margin-top: 7px;
+            font-family:
+                "SFMono-Regular",
+                "Cascadia Mono",
+                Consolas,
+                monospace;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .q-display-panel {
+            background: var(--ink);
+            color: white;
+            border-color: var(--ink);
+        }
+
+        .q-display-panel .q-panel-head {
+            border-color: #35404a;
+        }
+
+        .q-display-panel .q-panel-label {
+            color: #89939c;
+        }
+
+        .q-display-body {
+            padding: 20px;
+        }
+
+        .q-display-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 750;
+        }
+
+        .q-display-description {
+            margin: 8px 0 0;
+            color: #9ca5ac;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .q-display-link {
+            margin-top: 18px;
+        }
+
+        .q-display-link .q-btn {
+            background: white;
+            color: var(--ink);
+            border-color: white;
+        }
+
+        .q-display-link .q-btn:hover {
+            background: #dfe5e9;
+            border-color: #dfe5e9;
+        }
+
+        /* -----------------------------
+           FORM ELEMENTS
+        ----------------------------- */
 
         input,
         select,
         textarea {
             width: 100%;
-            padding: 0.75rem 0.8rem;
-
+            padding: 11px 12px;
             background: white;
-
-            border: 1px solid #d8d8d2;
-            border-radius: 5px;
-
+            border: 1px solid var(--line-dark);
+            border-radius: 0;
             outline: none;
         }
 
         input:focus,
         select:focus,
         textarea:focus {
-            border-color: #171717;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 1px var(--blue);
         }
 
         input[type="file"] {
-            padding: 0.55rem;
+            padding: 7px;
         }
 
-        .q-label {
-            display: block;
-            margin-bottom: 0.4rem;
+        /* -----------------------------
+           RESPONSIVE
+        ----------------------------- */
 
-            font-size: 0.8rem;
-            font-weight: 600;
+        @media (max-width: 900px) {
+            .q-shell {
+                width: min(100% - 28px, 1380px);
+            }
 
-            color: #555550;
+            .q-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .q-sidebar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
-        .q-divider {
-            border-top: 1px solid #deded8;
+        @media (max-width: 650px) {
+            .q-topbar {
+                height: auto;
+            }
+
+            .q-topbar-inner {
+                min-height: 60px;
+            }
+
+            .q-nav {
+                gap: 12px;
+            }
+
+            .q-nav a:first-child {
+                display: none;
+            }
+
+            .q-page {
+                padding-top: 24px;
+            }
+
+            .q-page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .q-header-actions {
+                width: 100%;
+            }
+
+            .q-header-actions .q-btn {
+                flex: 1;
+            }
+
+            .q-sidebar {
+                display: flex;
+            }
+
+            .q-current {
+                min-height: 310px;
+            }
+
+            .q-token-row {
+                padding: 0 14px;
+            }
+
+            .q-token-left {
+                gap: 10px;
+            }
+
+            .q-token-number {
+                min-width: 85px;
+            }
+
+            .q-counter-name {
+                display: none;
+            }
+
+            .q-token-right {
+                gap: 10px;
+            }
         }
 
         @media print {
-
             .no-print {
                 display: none !important;
             }
@@ -158,49 +771,37 @@
             body {
                 background: white;
             }
-
         }
-
     </style>
 
     {% block extra_head %}{% endblock %}
-
 </head>
 
+<body>
 
-<body class="min-h-screen">
+    <nav class="q-topbar no-print">
+        <div class="q-shell q-topbar-inner">
 
-    <nav class="no-print border-b border-[#deded8] bg-[#f7f7f5]">
-
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-
-            <a
-                href="{% url 'home' %}"
-                class="font-bold tracking-tight text-lg"
-            >
-                QDesk
+            <a href="{% url 'home' %}" class="q-brand">
+                <span class="q-brand-mark">Q</span>
+                <span class="q-brand-name">QDesk</span>
             </a>
 
-
-            <div class="flex items-center gap-6">
-
-                <a
-                    href="{% url 'organizations:list' %}"
-                    class="text-sm text-[#555550] hover:text-[#171717]"
-                >
+            <div class="q-nav">
+                <a href="{% url 'organizations:list' %}">
                     Organizations
                 </a>
 
+                <span style="color:#68727b;">
+                    QUEUE SYSTEM
+                </span>
             </div>
 
         </div>
-
     </nav>
-
 
     {% block content %}
     {% endblock %}
 
 </body>
-
-</html>
+</html> 

@@ -2,136 +2,108 @@
 
 {% block title %}{{ event.name }} | QDesk{% endblock %}
 
-
 {% block content %}
 
-<main class="max-w-7xl mx-auto px-6 py-10">
+<main class="q-shell q-page">
 
+    <header class="q-page-header no-print">
 
-    <!-- HEADER -->
-    <header class="mb-8">
+        <div>
 
+            <div class="q-breadcrumb">
+                <a href="{% url 'organizations:detail' event.organization.id %}">
+                    {{ event.organization.name }}
+                </a>
 
-        <div class="flex flex-wrap items-center justify-between gap-6">
+                <span class="q-breadcrumb-separator">/</span>
 
+                <span>{{ event.name }}</span>
+            </div>
 
-            <div>
+            <div class="q-page-title-row">
 
-                <div class="flex items-center gap-2 text-sm text-[#777770]">
+                <h1 class="q-page-title">
+                    {{ event.name }}
+                </h1>
 
-                    <a
-                        href="{% url 'organizations:detail' event.organization.id %}"
-                        class="hover:text-[#171717]"
-                    >
-                        {{ event.organization.name }}
-                    </a>
-
-                    <span>/</span>
-
-                    <span>{{ event.name }}</span>
-
-                </div>
-
-
-                <div class="flex items-center gap-4 mt-4">
-
-                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight">
-                        {{ event.name }}
-                    </h1>
-
-
-                    {% if event.is_active %}
-
-                        <span class="text-xs font-medium text-[#D94F30]">
-                            Active
-                        </span>
-
-                    {% else %}
-
-                        <span class="text-xs text-[#777770]">
-                            Inactive
-                        </span>
-
-                    {% endif %}
-
-                </div>
-
-
-                {% if event.location %}
-
-                    <p class="text-sm text-[#777770] mt-2">
-                        {{ event.location }}
-                    </p>
-
+                {% if event.is_active %}
+                    <span class="q-status q-status-live">
+                        Active
+                    </span>
+                {% else %}
+                    <span class="q-status q-status-off">
+                        Inactive
+                    </span>
                 {% endif %}
 
             </div>
 
-
-            <!-- HEADER ACTIONS -->
-            <div class="flex flex-wrap items-center gap-2">
-
-
-                <a
-                    href="{% url 'events:display' event.id %}"
-                    target="_blank"
-                    class="q-button-secondary"
-                >
-                    Public display
-                </a>
-
-
-                <button
-                    onclick="window.location.reload()"
-                    class="q-button-secondary"
-                >
-                    Refresh
-                </button>
-
-            </div>
+            {% if event.location %}
+                <p class="q-location">
+                    {{ event.location }}
+                </p>
+            {% endif %}
 
         </div>
 
+        <div class="q-header-actions">
 
-        <!-- EVENT META -->
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6 pt-5 border-t border-[#deded8] text-xs text-[#777770]">
+            <a
+                href="{% url 'events:display' event.id %}"
+                target="_blank"
+                rel="noopener"
+                class="q-btn q-btn-light"
+            >
+                Public display ↗
+            </a>
 
-            <span>
-                Token prefix:
-                <strong class="token text-[#171717]">
-                    {{ event.token_prefix }}
-                </strong>
-            </span>
-
-            <span>
-                Starting number:
-                <strong class="token text-[#171717]">
-                    {{ event.starting_number }}
-                </strong>
-            </span>
-
-            <span>
-                {% if event.is_active %}
-                    Queue is active
-                {% else %}
-                    Queue is inactive
-                {% endif %}
-            </span>
+            <button
+                onclick="window.location.reload()"
+                class="q-btn q-btn-light"
+            >
+                Refresh
+            </button>
 
         </div>
 
     </header>
 
 
-    <!-- DASHBOARD -->
-    <div
-        id="dashboard-wrapper"
-    >
+    <div class="q-meta no-print">
+
+        <div class="q-meta-item">
+            Prefix
+            <strong class="q-mono">
+                {{ event.token_prefix }}
+            </strong>
+        </div>
+
+        <div class="q-meta-item">
+            Starting
+            <strong class="q-mono">
+                {{ event.starting_number }}
+            </strong>
+        </div>
+
+        <div class="q-meta-item">
+            Status
+            <strong>
+                {% if event.is_active %}
+                    Queue active
+                {% else %}
+                    Queue inactive
+                {% endif %}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <div id="dashboard-wrapper">
 
         {% include "events/partials/dashboard.html" %}
 
     </div>
-
 
 </main>
 

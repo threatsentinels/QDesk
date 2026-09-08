@@ -1,79 +1,87 @@
-<div id="dashboard">
+<div id="dashboard" class="q-dashboard">
 
-    <!-- STATS -->
-    <section class="grid grid-cols-2 md:grid-cols-4 border-y border-[#deded8]">
+    <!--
+        QUICK NUMBERS
+        Small operational strip instead of four giant dashboard cards.
+    -->
 
-        <div class="p-5 md:p-6 border-r border-[#deded8]">
-            <p class="text-xs uppercase tracking-wider text-[#777770]">
-                Total
-            </p>
+    <div class="q-panel no-print">
 
-            <p class="token text-3xl font-bold mt-2">
-                {{ total_tokens }}
-            </p>
+        <div class="q-stats">
+
+            <div class="q-stat">
+                <div class="q-stat-label">
+                    Total issued
+                </div>
+
+                <div class="q-stat-value">
+                    {{ total_tokens }}
+                </div>
+            </div>
+
+            <div class="q-stat">
+                <div class="q-stat-label">
+                    Waiting
+                </div>
+
+                <div class="q-stat-value">
+                    {{ waiting_tokens }}
+                </div>
+            </div>
+
+            <div class="q-stat">
+                <div class="q-stat-label">
+                    Serving
+                </div>
+
+                <div class="q-stat-value">
+                    {{ serving_tokens }}
+                </div>
+            </div>
+
+            <div class="q-stat">
+                <div class="q-stat-label">
+                    Finished
+                </div>
+
+                <div class="q-stat-value">
+                    {{ finished_tokens }}
+                </div>
+            </div>
+
         </div>
 
-
-        <div class="p-5 md:p-6 md:border-r border-[#deded8]">
-            <p class="text-xs uppercase tracking-wider text-[#777770]">
-                Waiting
-            </p>
-
-            <p class="token text-3xl font-bold mt-2">
-                {{ waiting_tokens }}
-            </p>
-        </div>
+    </div>
 
 
-        <div class="p-5 md:p-6 border-r border-[#deded8]">
-            <p class="text-xs uppercase tracking-wider text-[#777770]">
-                Serving
-            </p>
-
-            <p class="token text-3xl font-bold mt-2">
-                {{ serving_tokens }}
-            </p>
-        </div>
+    <div class="q-layout">
 
 
-        <div class="p-5 md:p-6">
-            <p class="text-xs uppercase tracking-wider text-[#777770]">
-                Finished
-            </p>
+        <!-- =========================================
+             MAIN WORK AREA
+        ========================================== -->
 
-            <p class="token text-3xl font-bold mt-2">
-                {{ finished_tokens }}
-            </p>
-        </div>
-
-    </section>
-
-
-    <!-- MAIN -->
-    <div class="grid lg:grid-cols-3 gap-8 mt-8">
-
-
-        <!-- LEFT -->
-        <div class="lg:col-span-2">
+        <section>
 
 
             <!-- NOW SERVING -->
-            <section class="border border-[#deded8] bg-white">
 
-                <div class="px-6 py-5 border-b border-[#deded8] flex items-center justify-between">
+            <div class="q-panel">
+
+                <div class="q-panel-head">
 
                     <div>
-                        <p class="text-xs uppercase tracking-wider text-[#777770]">
-                            Current
+                        <p class="q-panel-label">
+                            Live queue
                         </p>
 
-                        <h2 class="text-lg font-semibold mt-1">
+                        <h2 class="q-panel-title">
                             Now serving
                         </h2>
                     </div>
 
                     {% if serving_tokens %}
-                        <span class="text-xs font-medium text-[#D94F30]">
+                        <span class="q-live">
                             LIVE
                         </span>
                     {% endif %}
@@ -81,229 +89,241 @@
                 </div>
 
 
-                <div class="p-8 md:p-12">
+                <div class="q-current">
 
-                    {% for token in tokens %}
+                    <div class="q-current-inner">
 
-                        {% if token.status == "serving" %}
+                        {% for token in tokens %}
 
-                            <div class="text-center">
+                            {% if token.status == "serving" %}
 
-                                <p class="text-xs uppercase tracking-[0.2em] text-[#777770]">
-                                    Token
+                                <p class="q-current-label">
+                                    Please proceed
                                 </p>
 
-                                <p class="token text-6xl md:text-8xl font-bold tracking-tight mt-4">
+                                <div class="q-current-number">
                                     {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
-                                </p>
+                                </div>
 
 
                                 {% if token.counter %}
 
-                                    <p class="mt-5 text-[#555550]">
-                                        Serving at
-                                        <strong class="text-[#171717]">
+                                    <p class="q-current-counter">
+                                        Counter
+                                        <strong>
                                             {{ token.counter.name }}
                                         </strong>
                                     </p>
 
                                 {% else %}
 
-                                    <p class="mt-5 text-sm text-[#777770]">
+                                    <p class="q-current-counter">
                                         Currently being served
                                     </p>
 
                                 {% endif %}
 
 
-                                <form
-                                    hx-post="{% url 'tokens:finish' token.id %}"
-                                    hx-target="#dashboard"
-                                    hx-swap="outerHTML"
-                                    class="mt-8"
-                                >
+                                <div class="q-current-action no-print">
 
-                                    {% csrf_token %}
-
-                                    <button
-                                        type="submit"
-                                        class="q-button"
+                                    <form
+                                        hx-post="{% url 'tokens:finish' token.id %}"
+                                        hx-target="#dashboard"
+                                        hx-swap="outerHTML"
                                     >
-                                        Finish token
-                                    </button>
 
-                                </form>
+                                        {% csrf_token %}
 
-                            </div>
+                                        <button
+                                            type="submit"
+                                            class="q-btn q-btn-blue"
+                                        >
+                                            Finish {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                                        </button>
 
-                        {% endif %}
+                                    </form>
 
-                    {% endfor %}
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
 
 
-                    {% if serving_tokens == 0 %}
+                        {% if serving_tokens == 0 %}
 
-                        <div class="text-center py-8">
-
-                            <p class="text-lg font-medium">
-                                No token is being served
+                            <p class="q-current-label">
+                                Queue idle
                             </p>
+
+                            <div class="q-current-number">
+                                —
+                            </div>
 
                             {% if waiting_tokens %}
 
-                                <p class="text-sm text-[#777770] mt-2">
-                                    {{ waiting_tokens }}
+                                <p class="q-current-counter">
+                                    <strong>
+                                        {{ waiting_tokens }}
+                                    </strong>
                                     token{{ waiting_tokens|pluralize }}
-                                    waiting in the queue.
+                                    waiting
                                 </p>
 
                             {% else %}
 
-                                <p class="text-sm text-[#777770] mt-2">
-                                    Generate a token to start the queue.
+                                <p class="q-current-counter">
+                                    No one is currently waiting.
                                 </p>
 
                             {% endif %}
 
-                        </div>
+                        {% endif %}
 
-                    {% endif %}
+                    </div>
 
                 </div>
 
-            </section>
+            </div>
 
 
             <!-- QUEUE -->
-            <section class="border border-[#deded8] bg-white mt-8">
 
-                <div class="px-6 py-5 border-b border-[#deded8]">
+            <div class="q-panel q-queue">
 
-                    <p class="text-xs uppercase tracking-wider text-[#777770]">
-                        Tokens
-                    </p>
+                <div class="q-queue-head">
 
-                    <h2 class="text-lg font-semibold mt-1">
-                        Queue
-                    </h2>
+                    <div>
+                        <p class="q-panel-label">
+                            Token list
+                        </p>
+
+                        <h2 class="q-panel-title">
+                            Queue
+                        </h2>
+                    </div>
+
+                    <span class="q-queue-count">
+                        {{ total_tokens }} issued
+                    </span>
 
                 </div>
 
 
                 {% if tokens %}
 
-                    <div>
+                    {% for token in tokens %}
 
-                        {% for token in tokens %}
+                        <div class="q-token-row">
 
-                            <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-[#eeeeea] last:border-b-0">
+                            <div class="q-token-left">
 
-                                <div class="flex items-center gap-4">
+                                <span class="q-token-number q-mono">
+                                    {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                                </span>
 
-                                    <span class="token text-base font-semibold">
-                                        {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+
+                                {% if token.status == "waiting" %}
+
+                                    <span class="q-token-status">
+                                        Waiting
                                     </span>
 
+                                {% elif token.status == "serving" %}
 
-                                    {% if token.status == "waiting" %}
+                                    <span class="q-token-status serving">
+                                        Serving
+                                    </span>
 
-                                        <span class="text-xs text-[#777770]">
-                                            Waiting
-                                        </span>
+                                {% elif token.status == "finished" %}
 
-                                    {% elif token.status == "serving" %}
+                                    <span class="q-token-status finished">
+                                        Finished
+                                    </span>
 
-                                        <span class="text-xs font-medium text-[#D94F30]">
-                                            Serving
-                                        </span>
+                                {% else %}
 
-                                    {% elif token.status == "finished" %}
+                                    <span class="q-token-status">
+                                        {{ token.get_status_display }}
+                                    </span>
 
-                                        <span class="text-xs text-[#777770]">
-                                            Finished
-                                        </span>
-
-                                    {% else %}
-
-                                        <span class="text-xs text-[#999990]">
-                                            {{ token.get_status_display }}
-                                        </span>
-
-                                    {% endif %}
-
-                                </div>
-
-
-                                <div class="flex items-center gap-4">
-
-                                    {% if token.counter %}
-
-                                        <span class="hidden sm:block text-xs text-[#777770]">
-                                            {{ token.counter.name }}
-                                        </span>
-
-                                    {% endif %}
-
-
-                                    <!-- PRINT -->
-                                    <a
-                                        href="{% url 'tokens:print' token.id %}"
-                                        target="_blank"
-                                        rel="noopener"
-                                        class="text-xs font-medium text-[#555550] hover:text-[#D94F30] transition"
-                                    >
-                                        Print
-                                    </a>
-
-                                </div>
+                                {% endif %}
 
                             </div>
 
-                        {% endfor %}
 
-                    </div>
+                            <div class="q-token-right">
+
+                                {% if token.counter %}
+
+                                    <span class="q-counter-name">
+                                        {{ token.counter.name }}
+                                    </span>
+
+                                {% endif %}
+
+
+                                <a
+                                    href="{% url 'tokens:print' token.id %}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="q-print no-print"
+                                >
+                                    Print
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
 
                 {% else %}
 
-                    <div class="px-6 py-12 text-center">
-
-                        <p class="text-sm text-[#777770]">
-                            No tokens generated yet.
-                        </p>
-
+                    <div class="q-empty">
+                        No tokens have been issued yet.
                     </div>
 
                 {% endif %}
 
-            </section>
-
-        </div>
+            </div>
 
 
-        <!-- RIGHT -->
-        <aside class="space-y-8">
+        </section>
+
+
+        <!-- =========================================
+             OPERATOR SIDEBAR
+        ========================================== -->
+
+        <aside class="q-sidebar no-print">
 
 
             <!-- CONTROLS -->
-            <section class="border border-[#deded8] bg-white">
 
-                <div class="px-6 py-5 border-b border-[#deded8]">
+            <section class="q-panel">
 
-                    <p class="text-xs uppercase tracking-wider text-[#777770]">
-                        Controls
-                    </p>
+                <div class="q-panel-head">
 
-                    <h2 class="text-lg font-semibold mt-1">
-                        Queue control
-                    </h2>
+                    <div>
+                        <p class="q-panel-label">
+                            Operator
+                        </p>
+
+                        <h2 class="q-panel-title">
+                            Queue controls
+                        </h2>
+                    </div>
 
                 </div>
 
 
-                <div class="p-6 space-y-3">
+                <div class="q-control">
 
+                    <p class="q-control-label">
+                        Issue token
+                    </p>
 
-                    <!-- GENERATE -->
                     <form
                         hx-post="{% url 'tokens:generate' event.id %}"
                         hx-target="#dashboard"
@@ -314,15 +334,26 @@
 
                         <button
                             type="submit"
-                            class="q-button w-full"
+                            class="q-btn q-btn-blue q-btn-full"
                         >
-                            Generate token
+                            + Generate token
                         </button>
 
                     </form>
 
+                    <p class="q-control-note">
+                        Creates the next number in the queue.
+                    </p>
 
-                    <!-- CALL NEXT -->
+                </div>
+
+
+                <div class="q-control">
+
+                    <p class="q-control-label">
+                        Next customer
+                    </p>
+
                     <form
                         hx-post="{% url 'tokens:call_next' event.id %}"
                         hx-target="#dashboard"
@@ -333,15 +364,23 @@
 
                         <button
                             type="submit"
-                            class="q-button-secondary w-full"
+                            class="q-btn q-btn-light q-btn-full"
                             {% if serving_tokens %}
                                 disabled
                             {% endif %}
                         >
-                            Call next
+                            Call next →
                         </button>
 
                     </form>
+
+                    {% if serving_tokens %}
+
+                        <p class="q-control-note">
+                            Finish the current token before calling the next one.
+                        </p>
+
+                    {% endif %}
 
                 </div>
 
@@ -349,67 +388,66 @@
 
 
             <!-- PERFORMANCE -->
-            <section class="border border-[#deded8] bg-white">
 
-                <div class="px-6 py-5 border-b border-[#deded8]">
+            <section class="q-panel">
 
-                    <p class="text-xs uppercase tracking-wider text-[#777770]">
-                        Performance
-                    </p>
+                <div class="q-panel-head">
 
-                    <h2 class="text-lg font-semibold mt-1">
-                        Queue metrics
-                    </h2>
+                    <div>
+                        <p class="q-panel-label">
+                            Statistics
+                        </p>
+
+                        <h2 class="q-panel-title">
+                            Queue timing
+                        </h2>
+                    </div>
 
                 </div>
 
 
-                <div>
+                <div class="q-metric">
 
-                    <div class="px-6 py-5 border-b border-[#eeeeea]">
-
-                        <p class="text-xs text-[#777770]">
-                            Average wait
-                        </p>
-
-                        {% if average_wait %}
-
-                            <p class="token text-xl font-semibold mt-2">
-                                {{ average_wait }}
-                            </p>
-
-                        {% else %}
-
-                            <p class="text-sm text-[#999990] mt-2">
-                                No data yet
-                            </p>
-
-                        {% endif %}
-
+                    <div class="q-metric-label">
+                        Average wait
                     </div>
 
+                    {% if average_wait %}
 
-                    <div class="px-6 py-5">
+                        <div class="q-metric-value">
+                            {{ average_wait }}
+                        </div>
 
-                        <p class="text-xs text-[#777770]">
-                            Average service
-                        </p>
+                    {% else %}
 
-                        {% if average_service %}
+                        <div class="q-metric-value" style="color:#9ba0a5;">
+                            —
+                        </div>
 
-                            <p class="token text-xl font-semibold mt-2">
-                                {{ average_service }}
-                            </p>
+                    {% endif %}
 
-                        {% else %}
+                </div>
 
-                            <p class="text-sm text-[#999990] mt-2">
-                                No data yet
-                            </p>
 
-                        {% endif %}
+                <div class="q-metric">
 
+                    <div class="q-metric-label">
+                        Average service
                     </div>
+
+                    {% if average_service %}
+
+                        <div class="q-metric-value">
+                            {{ average_service }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="q-metric-value" style="color:#9ba0a5;">
+                            —
+                        </div>
+
+                    {% endif %}
 
                 </div>
 
@@ -417,35 +455,54 @@
 
 
             <!-- PUBLIC DISPLAY -->
-            <section class="border border-[#deded8] bg-[#171717] text-white">
 
-                <div class="p-6">
+            <section class="q-panel q-display-panel">
 
-                    <p class="text-xs uppercase tracking-wider text-[#999990]">
-                        Public screen
+                <div class="q-panel-head">
+
+                    <div>
+                        <p class="q-panel-label">
+                            Audience
+                        </p>
+
+                        <h2 class="q-panel-title">
+                            Public screen
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="q-display-body">
+
+                    <p class="q-display-title">
+                        Put the queue on a screen.
                     </p>
 
-                    <h2 class="text-lg font-semibold mt-1">
-                        Queue display
-                    </h2>
-
-                    <p class="text-sm text-[#aaa] mt-2 leading-relaxed">
-                        Open the public display on a TV, monitor or second device.
+                    <p class="q-display-description">
+                        Open the public display on a TV, monitor,
+                        laptop or second device so visitors can follow
+                        their position without asking the desk.
                     </p>
 
 
-                    <a
-                        href="{% url 'events:display' event.id %}"
-                        target="_blank"
-                        rel="noopener"
-                        class="inline-flex items-center justify-center mt-5 px-4 py-2.5 bg-white text-[#171717] text-sm font-semibold hover:bg-[#D94F30] hover:text-white transition"
-                    >
-                        Open display →
-                    </a>
+                    <div class="q-display-link">
+
+                        <a
+                            href="{% url 'events:display' event.id %}"
+                            target="_blank"
+                            rel="noopener"
+                            class="q-btn q-btn-full"
+                        >
+                            Open display ↗
+                        </a>
+
+                    </div>
 
                 </div>
 
             </section>
+
 
         </aside>
 
