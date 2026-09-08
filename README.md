@@ -6,7 +6,7 @@ You set up an event, issue tokens, call the next person up, and throw a display 
 
 The app supports multiple organizations, events, and counters. Tokens get custom prefixes, automatic numbering, and can be printed out. Staff get a real-time dashboard while visitors see a clean public display in the waiting room. Everything tracks token statuses through waiting, serving, finished, or cancelled, and gives you basic stats on wait times.
 
-On the tech side, I split the backend into modular Django apps for organizations, events, counters, and tokens instead of stuffing everything into one giant views.py. The backend runs on Python, Django, and SQLite, while the frontend uses Django Templates and Tailwind CSS. HTMX handles the live updates so the page never has to fully reload when a token changes.
+On the coding paart, I splited the backend into modular Django apps for organizations, events, counters, and tokens instead of stuffing everything into one giant views.py. The backend runs on Python, Django, and SQLite, while the frontend uses Django Templates and Tailwind CSS. HTMX handles the live updates so the page never has to fully reload when a token changes.
 
 To run it locally:
 
