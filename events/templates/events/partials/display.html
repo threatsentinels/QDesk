@@ -1,93 +1,296 @@
-<div
-    id="display"
-    hx-get="{% url 'events:display_data' event.id %}"
-    hx-trigger="every 3s"
-    hx-target="#display"
-    hx-swap="outerHTML"
->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ event.name }} — QDesk</title>
+
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            background: #f7f7f7;
+            color: #222;
+        }
 
 
-    {% for token in tokens %}
+        .display-header {
+            padding: 22px 32px;
 
-        {% if token.status == "serving" %}
+            background: white;
 
-            <div class="text-center">
+            border-bottom: 1px solid #ddd;
 
-                <p class="text-sm uppercase tracking-[0.2em] text-[#777770]">
-                    Now serving
-                </p>
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-                <p class="token text-[clamp(5rem,15vw,11rem)] font-bold leading-none mt-5">
-                    {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
-                </p>
+            gap: 20px;
+        }
 
-                {% if token.counter %}
 
-                    <p class="mt-5 text-xl text-[#555550]">
-                        Please go to
-                        <strong class="text-[#171717]">
-                            {{ token.counter.name }}
-                        </strong>
-                    </p>
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+        }
 
-                {% endif %}
 
+        .organization {
+            margin-top: 2px;
+
+            color: #777;
+            font-size: 13px;
+        }
+
+
+        .event-info {
+            text-align: right;
+        }
+
+
+        .event-name {
+            font-weight: 600;
+        }
+
+
+        .event-location {
+            margin-top: 2px;
+
+            color: #777;
+            font-size: 13px;
+        }
+
+
+        .display-main {
+            width: min(1100px, calc(100% - 40px));
+
+            margin: 0 auto;
+
+            padding: 55px 0;
+        }
+
+
+        #display {
+            background: white;
+
+            border: 1px solid #ddd;
+        }
+
+
+        .public-current {
+            min-height: 420px;
+
+            padding: 50px 30px;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+        }
+
+
+        .public-label {
+            margin: 0;
+
+            color: #777;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+
+        .public-token {
+            margin-top: 20px;
+
+            color: #111;
+
+            font-size: clamp(70px, 13vw, 150px);
+            line-height: 1;
+
+            font-weight: 700;
+        }
+
+
+        .public-counter {
+            margin: 25px 0 0;
+
+            color: #555;
+
+            font-size: 22px;
+        }
+
+
+        .public-counter strong {
+            color: #111;
+        }
+
+
+        .public-message {
+            margin-top: 20px;
+
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+
+        .public-waiting {
+            padding: 22px 30px;
+
+            border-top: 1px solid #ddd;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 30px;
+        }
+
+
+        .public-help {
+            margin: 4px 0 0;
+
+            color: #777;
+            font-size: 13px;
+        }
+
+
+        .public-token-list {
+            display: flex;
+            flex-wrap: wrap;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+        }
+
+
+        .public-token-list span {
+            padding: 7px 11px;
+
+            border: 1px solid #ccc;
+            border-radius: 4px;
+
+            background: white;
+
+            font-weight: 600;
+        }
+
+
+        @media (max-width: 650px) {
+
+            .display-header {
+                padding: 18px;
+            }
+
+            .display-main {
+                width: calc(100% - 24px);
+                padding: 25px 0;
+            }
+
+            .public-current {
+                min-height: 350px;
+                padding: 35px 20px;
+            }
+
+            .public-message {
+                font-size: 22px;
+            }
+
+            .public-counter {
+                font-size: 18px;
+            }
+
+            .public-waiting {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .public-token-list {
+                justify-content: flex-start;
+            }
+
+            .event-info {
+                display: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <header class="display-header">
+
+        <div>
+
+            <div class="brand">
+                QDesk
             </div>
 
-        {% endif %}
-
-    {% empty %}
-
-        <div class="text-center">
-
-            <p class="text-sm uppercase tracking-[0.2em] text-[#777770]">
-                Queue
-            </p>
-
-            <p class="text-4xl font-bold mt-5">
-                Waiting for the first call
-            </p>
+            <div class="organization">
+                {{ event.organization.name }}
+            </div>
 
         </div>
 
-    {% endfor %}
 
+        <div class="event-info">
 
-    <div class="mt-16 pt-8 border-t border-[#deded8]">
-
-        <div class="flex items-center justify-between">
-
-            <div>
-
-                <p class="text-xs uppercase tracking-widest text-[#777770]">
-                    Waiting
-                </p>
-
-                <p class="text-sm text-[#777770] mt-1">
-                    Please keep your token ready.
-                </p>
-
+            <div class="event-name">
+                {{ event.name }}
             </div>
 
+            {% if event.location %}
 
-            <div class="flex gap-3 flex-wrap justify-end">
+                <div class="event-location">
+                    {{ event.location }}
+                </div>
 
-                {% for token in tokens %}
-
-                    {% if token.status == "waiting" %}
-
-                        <span class="token text-xl font-semibold">
-                            {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
-                        </span>
-
-                    {% endif %}
-
-                {% endfor %}
-
-            </div>
+            {% endif %}
 
         </div>
 
-    </div>
+    </header>
 
-</div>
+
+    <main class="display-main">
+
+        {% include "events/partials/display.html" %}
+
+    </main>
+
+</body>
+
+</html>

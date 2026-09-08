@@ -1,130 +1,72 @@
-<div id="dashboard" class="q-dashboard">
+<div id="dashboard">
 
-    <!--
-        QUICK NUMBERS
-        Small operational strip instead of four giant dashboard cards.
-    -->
+    <!-- Quick stats -->
+    <div class="card" style="margin-bottom: 20px;">
+        <div class="stats">
 
-    <div class="q-panel no-print">
-
-        <div class="q-stats">
-
-            <div class="q-stat">
-                <div class="q-stat-label">
-                    Total issued
-                </div>
-
-                <div class="q-stat-value">
-                    {{ total_tokens }}
-                </div>
+            <div class="stat">
+                <div class="stat-label">Total issued</div>
+                <div class="stat-value">{{ total_tokens }}</div>
             </div>
 
-            <div class="q-stat">
-                <div class="q-stat-label">
-                    Waiting
-                </div>
-
-                <div class="q-stat-value">
-                    {{ waiting_tokens }}
-                </div>
+            <div class="stat">
+                <div class="stat-label">Waiting</div>
+                <div class="stat-value">{{ waiting_tokens }}</div>
             </div>
 
-            <div class="q-stat">
-                <div class="q-stat-label">
-                    Serving
-                </div>
-
-                <div class="q-stat-value">
-                    {{ serving_tokens }}
-                </div>
+            <div class="stat">
+                <div class="stat-label">Serving</div>
+                <div class="stat-value">{{ serving_tokens }}</div>
             </div>
 
-            <div class="q-stat">
-                <div class="q-stat-label">
-                    Finished
-                </div>
-
-                <div class="q-stat-value">
-                    {{ finished_tokens }}
-                </div>
+            <div class="stat">
+                <div class="stat-label">Finished</div>
+                <div class="stat-value">{{ finished_tokens }}</div>
             </div>
 
         </div>
-
     </div>
 
 
-    <div class="q-layout">
+    <div class="dashboard-grid">
 
+        <!-- Main column -->
+        <main class="main-column">
 
-        <!-- =========================================
-             MAIN WORK AREA
-        ========================================== -->
+            <!-- Current token -->
+            <section class="card">
 
-        <section>
-
-
-            <!-- NOW SERVING -->
-
-            <div class="q-panel">
-
-                <div class="q-panel-head">
-
-                    <div>
-                        <p class="q-panel-label">
-                            Live queue
-                        </p>
-
-                        <h2 class="q-panel-title">
-                            Now serving
-                        </h2>
-                    </div>
-
-                    {% if serving_tokens %}
-                        <span class="q-live">
-                            LIVE
-                        </span>
-                    {% endif %}
-
+                <div class="card-header">
+                    Now serving
                 </div>
 
+                <div class="serving">
 
-                <div class="q-current">
+                    {% for token in tokens %}
 
-                    <div class="q-current-inner">
+                        {% if token.status == "serving" %}
 
-                        {% for token in tokens %}
+                            <div>
 
-                            {% if token.status == "serving" %}
-
-                                <p class="q-current-label">
+                                <div class="serving-label">
                                     Please proceed
-                                </p>
+                                </div>
 
-                                <div class="q-current-number">
+                                <div class="token-number">
                                     {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
                                 </div>
 
-
                                 {% if token.counter %}
-
-                                    <p class="q-current-counter">
-                                        Counter
-                                        <strong>
-                                            {{ token.counter.name }}
-                                        </strong>
-                                    </p>
-
+                                    <div class="counter">
+                                        Counter: <strong>{{ token.counter.name }}</strong>
+                                    </div>
                                 {% else %}
-
-                                    <p class="q-current-counter">
+                                    <div class="counter">
                                         Currently being served
-                                    </p>
-
+                                    </div>
                                 {% endif %}
 
-
-                                <div class="q-current-action no-print">
+                                <div style="margin-top: 22px;" class="no-print">
 
                                     <form
                                         hx-post="{% url 'tokens:finish' token.id %}"
@@ -136,77 +78,63 @@
 
                                         <button
                                             type="submit"
-                                            class="q-btn q-btn-blue"
+                                            class="btn btn-danger"
                                         >
-                                            Finish {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                                            Finish token
                                         </button>
 
                                     </form>
 
                                 </div>
 
-                            {% endif %}
+                            </div>
 
-                        {% endfor %}
+                        {% endif %}
+
+                    {% endfor %}
 
 
-                        {% if serving_tokens == 0 %}
+                    {% if serving_tokens == 0 %}
 
-                            <p class="q-current-label">
+                        <div>
+
+                            <div class="serving-label">
                                 Queue idle
-                            </p>
+                            </div>
 
-                            <div class="q-current-number">
+                            <div class="token-number">
                                 —
                             </div>
 
                             {% if waiting_tokens %}
-
-                                <p class="q-current-counter">
-                                    <strong>
-                                        {{ waiting_tokens }}
-                                    </strong>
+                                <div class="counter">
+                                    {{ waiting_tokens }}
                                     token{{ waiting_tokens|pluralize }}
                                     waiting
-                                </p>
-
+                                </div>
                             {% else %}
-
-                                <p class="q-current-counter">
+                                <div class="counter">
                                     No one is currently waiting.
-                                </p>
-
+                                </div>
                             {% endif %}
 
-                        {% endif %}
+                        </div>
 
-                    </div>
+                    {% endif %}
 
                 </div>
 
-            </div>
+            </section>
 
 
-            <!-- QUEUE -->
+            <!-- Queue -->
+            <section class="card queue">
 
-            <div class="q-panel q-queue">
-
-                <div class="q-queue-head">
-
-                    <div>
-                        <p class="q-panel-label">
-                            Token list
-                        </p>
-
-                        <h2 class="q-panel-title">
-                            Queue
-                        </h2>
-                    </div>
-
-                    <span class="q-queue-count">
+                <div class="card-header" style="display: flex; justify-content: space-between; gap: 10px;">
+                    <span>Queue</span>
+                    <span style="color: #777; font-size: 12px;">
                         {{ total_tokens }} issued
                     </span>
-
                 </div>
 
 
@@ -214,36 +142,35 @@
 
                     {% for token in tokens %}
 
-                        <div class="q-token-row">
+                        <div class="queue-row">
 
-                            <div class="q-token-left">
+                            <div>
 
-                                <span class="q-token-number q-mono">
+                                <span class="queue-token">
                                     {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
                                 </span>
 
-
                                 {% if token.status == "waiting" %}
 
-                                    <span class="q-token-status">
+                                    <span class="queue-status">
                                         Waiting
                                     </span>
 
                                 {% elif token.status == "serving" %}
 
-                                    <span class="q-token-status serving">
+                                    <span class="queue-status" style="color: #dc2626;">
                                         Serving
                                     </span>
 
                                 {% elif token.status == "finished" %}
 
-                                    <span class="q-token-status finished">
+                                    <span class="queue-status">
                                         Finished
                                     </span>
 
                                 {% else %}
 
-                                    <span class="q-token-status">
+                                    <span class="queue-status">
                                         {{ token.get_status_display }}
                                     </span>
 
@@ -252,22 +179,20 @@
                             </div>
 
 
-                            <div class="q-token-right">
+                            <div style="display: flex; align-items: center; gap: 15px;">
 
                                 {% if token.counter %}
-
-                                    <span class="q-counter-name">
+                                    <span style="color: #777; font-size: 12px;">
                                         {{ token.counter.name }}
                                     </span>
-
                                 {% endif %}
-
 
                                 <a
                                     href="{% url 'tokens:print' token.id %}"
                                     target="_blank"
                                     rel="noopener"
-                                    class="q-print no-print"
+                                    class="no-print"
+                                    style="color: #2563eb; font-size: 12px;"
                                 >
                                     Print
                                 </a>
@@ -280,49 +205,33 @@
 
                 {% else %}
 
-                    <div class="q-empty">
+                    <div class="queue-empty">
                         No tokens have been issued yet.
                     </div>
 
                 {% endif %}
 
-            </div>
+            </section>
+
+        </main>
 
 
-        </section>
+        <!-- Sidebar -->
+        <aside class="sidebar no-print">
 
+            <!-- Controls -->
+            <section class="card sidebar-card">
 
-        <!-- =========================================
-             OPERATOR SIDEBAR
-        ========================================== -->
-
-        <aside class="q-sidebar no-print">
-
-
-            <!-- CONTROLS -->
-
-            <section class="q-panel">
-
-                <div class="q-panel-head">
-
-                    <div>
-                        <p class="q-panel-label">
-                            Operator
-                        </p>
-
-                        <h2 class="q-panel-title">
-                            Queue controls
-                        </h2>
-                    </div>
-
+                <div class="card-header">
+                    Queue controls
                 </div>
 
 
-                <div class="q-control">
+                <div class="control">
 
-                    <p class="q-control-label">
+                    <div class="control-title">
                         Issue token
-                    </p>
+                    </div>
 
                     <form
                         hx-post="{% url 'tokens:generate' event.id %}"
@@ -334,25 +243,25 @@
 
                         <button
                             type="submit"
-                            class="q-btn q-btn-blue q-btn-full"
+                            class="btn btn-primary btn-block"
                         >
                             + Generate token
                         </button>
 
                     </form>
 
-                    <p class="q-control-note">
+                    <p class="control-note">
                         Creates the next number in the queue.
                     </p>
 
                 </div>
 
 
-                <div class="q-control">
+                <div class="control">
 
-                    <p class="q-control-label">
+                    <div class="control-title">
                         Next customer
-                    </p>
+                    </div>
 
                     <form
                         hx-post="{% url 'tokens:call_next' event.id %}"
@@ -364,19 +273,19 @@
 
                         <button
                             type="submit"
-                            class="q-btn q-btn-light q-btn-full"
+                            class="btn btn-block"
                             {% if serving_tokens %}
                                 disabled
                             {% endif %}
                         >
-                            Call next →
+                            Call next
                         </button>
 
                     </form>
 
                     {% if serving_tokens %}
 
-                        <p class="q-control-note">
+                        <p class="control-note">
                             Finish the current token before calling the next one.
                         </p>
 
@@ -387,66 +296,46 @@
             </section>
 
 
-            <!-- PERFORMANCE -->
+            <!-- Statistics -->
+            <section class="card sidebar-card">
 
-            <section class="q-panel">
-
-                <div class="q-panel-head">
-
-                    <div>
-                        <p class="q-panel-label">
-                            Statistics
-                        </p>
-
-                        <h2 class="q-panel-title">
-                            Queue timing
-                        </h2>
-                    </div>
-
+                <div class="card-header">
+                    Queue timing
                 </div>
 
+                <div class="control">
 
-                <div class="q-metric">
-
-                    <div class="q-metric-label">
+                    <div class="control-title">
                         Average wait
                     </div>
 
                     {% if average_wait %}
-
-                        <div class="q-metric-value">
+                        <div class="stat-value">
                             {{ average_wait }}
                         </div>
-
                     {% else %}
-
-                        <div class="q-metric-value" style="color:#9ba0a5;">
+                        <div style="color: #999;">
                             —
                         </div>
-
                     {% endif %}
 
                 </div>
 
 
-                <div class="q-metric">
+                <div class="control">
 
-                    <div class="q-metric-label">
+                    <div class="control-title">
                         Average service
                     </div>
 
                     {% if average_service %}
-
-                        <div class="q-metric-value">
+                        <div class="stat-value">
                             {{ average_service }}
                         </div>
-
                     {% else %}
-
-                        <div class="q-metric-value" style="color:#9ba0a5;">
+                        <div style="color: #999;">
                             —
                         </div>
-
                     {% endif %}
 
                 </div>
@@ -454,55 +343,31 @@
             </section>
 
 
-            <!-- PUBLIC DISPLAY -->
+            <!-- Public display -->
+            <section class="card sidebar-card">
 
-            <section class="q-panel q-display-panel">
-
-                <div class="q-panel-head">
-
-                    <div>
-                        <p class="q-panel-label">
-                            Audience
-                        </p>
-
-                        <h2 class="q-panel-title">
-                            Public screen
-                        </h2>
-                    </div>
-
+                <div class="card-header">
+                    Public display
                 </div>
 
+                <div class="control">
 
-                <div class="q-display-body">
-
-                    <p class="q-display-title">
-                        Put the queue on a screen.
+                    <p style="margin-top: 0;">
+                        Open the queue on another screen so visitors can see which token is being served.
                     </p>
 
-                    <p class="q-display-description">
-                        Open the public display on a TV, monitor,
-                        laptop or second device so visitors can follow
-                        their position without asking the desk.
-                    </p>
-
-
-                    <div class="q-display-link">
-
-                        <a
-                            href="{% url 'events:display' event.id %}"
-                            target="_blank"
-                            rel="noopener"
-                            class="q-btn q-btn-full"
-                        >
-                            Open display ↗
-                        </a>
-
-                    </div>
+                    <a
+                        href="{% url 'events:display' event.id %}"
+                        target="_blank"
+                        rel="noopener"
+                        class="btn btn-block"
+                    >
+                        Open display
+                    </a>
 
                 </div>
 
             </section>
-
 
         </aside>
 

@@ -1,38 +1,52 @@
 <div id="queue">
 
-    <div class="space-y-2">
+    <div class="queue-list">
 
         {% for token in tokens %}
 
-            <div class="flex items-center justify-between bg-slate-800/60 rounded-lg px-4 py-3">
+            <div class="queue-row">
 
-                <span class="font-semibold">
+                <div class="queue-token">
                     {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
-                </span>
+                </div>
 
-                {% if token.status == "waiting" %}
 
-                    <span class="text-sm text-amber-400">
-                        Waiting
-                    </span>
+                <div class="queue-status">
 
-                {% elif token.status == "serving" %}
+                    {% if token.status == "waiting" %}
 
-                    <span class="text-sm text-blue-400">
-                        Serving
-                    </span>
+                        <span class="status-waiting">
+                            Waiting
+                        </span>
 
-                {% elif token.status == "finished" %}
+                    {% elif token.status == "serving" %}
 
-                    <span class="text-sm text-emerald-400">
-                        Finished
-                    </span>
+                        <span class="status-serving">
+                            Serving
+                        </span>
 
-                {% else %}
+                    {% elif token.status == "finished" %}
 
-                    <span class="text-sm text-slate-400">
-                        {{ token.get_status_display }}
-                    </span>
+                        <span class="status-finished">
+                            Finished
+                        </span>
+
+                    {% else %}
+
+                        <span>
+                            {{ token.get_status_display }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                {% if token.counter %}
+
+                    <div class="queue-counter">
+                        {{ token.counter.name }}
+                    </div>
 
                 {% endif %}
 
@@ -40,9 +54,9 @@
 
         {% empty %}
 
-            <p class="text-slate-500 text-center py-6">
+            <div class="queue-empty">
                 No tokens generated yet.
-            </p>
+            </div>
 
         {% endfor %}
 

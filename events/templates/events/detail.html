@@ -1,37 +1,39 @@
+
 {% extends "base.html" %}
 
 {% block title %}{{ event.name }} | QDesk{% endblock %}
 
 {% block content %}
 
-<main class="q-shell q-page">
+<main class="page">
 
-    <header class="q-page-header no-print">
+    <!-- Event header -->
+    <header class="page-header no-print">
 
         <div>
 
-            <div class="q-breadcrumb">
+            <div class="breadcrumb">
                 <a href="{% url 'organizations:detail' event.organization.id %}">
                     {{ event.organization.name }}
                 </a>
 
-                <span class="q-breadcrumb-separator">/</span>
+                <span>/</span>
 
                 <span>{{ event.name }}</span>
             </div>
 
-            <div class="q-page-title-row">
+            <div class="page-title-row">
 
-                <h1 class="q-page-title">
+                <h1 class="page-title">
                     {{ event.name }}
                 </h1>
 
                 {% if event.is_active %}
-                    <span class="q-status q-status-live">
+                    <span class="status status-active">
                         Active
                     </span>
                 {% else %}
-                    <span class="q-status q-status-off">
+                    <span class="status status-inactive">
                         Inactive
                     </span>
                 {% endif %}
@@ -39,27 +41,29 @@
             </div>
 
             {% if event.location %}
-                <p class="q-location">
+                <p class="location">
                     {{ event.location }}
                 </p>
             {% endif %}
 
         </div>
 
-        <div class="q-header-actions">
+
+        <div class="header-actions">
 
             <a
                 href="{% url 'events:display' event.id %}"
                 target="_blank"
                 rel="noopener"
-                class="q-btn q-btn-light"
+                class="btn"
             >
                 Public display ↗
             </a>
 
             <button
+                type="button"
                 onclick="window.location.reload()"
-                class="q-btn q-btn-light"
+                class="btn"
             >
                 Refresh
             </button>
@@ -69,24 +73,21 @@
     </header>
 
 
-    <div class="q-meta no-print">
+    <!-- Event information -->
+    <div class="meta no-print">
 
-        <div class="q-meta-item">
-            Prefix
-            <strong class="q-mono">
-                {{ event.token_prefix }}
-            </strong>
+        <div class="meta-item">
+            <span>Prefix</span>
+            <strong>{{ event.token_prefix }}</strong>
         </div>
 
-        <div class="q-meta-item">
-            Starting
-            <strong class="q-mono">
-                {{ event.starting_number }}
-            </strong>
+        <div class="meta-item">
+            <span>Starting number</span>
+            <strong>{{ event.starting_number }}</strong>
         </div>
 
-        <div class="q-meta-item">
-            Status
+        <div class="meta-item">
+            <span>Status</span>
             <strong>
                 {% if event.is_active %}
                     Queue active
@@ -99,6 +100,7 @@
     </div>
 
 
+    <!-- Dashboard -->
     <div id="dashboard-wrapper">
 
         {% include "events/partials/dashboard.html" %}
@@ -108,3 +110,4 @@
 </main>
 
 {% endblock %}
+

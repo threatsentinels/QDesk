@@ -1,78 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
+<div
+    id="display"
+    hx-get="{% url 'events:display_data' event.id %}"
+    hx-trigger="every 3s"
+    hx-target="#display"
+    hx-swap="outerHTML"
+>
 
-<head>
+    {% for token in tokens %}
 
-    <meta charset="UTF-8">
+        {% if token.status == "serving" %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+            <div class="public-current">
 
-    <title>{{ event.name }} — QDesk Display</title>
+                <p class="public-label">
+                    Now serving
+                </p>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-
-</head>
-
-
-<body class="bg-[#f7f7f5] text-[#171717] min-h-screen">
-
-
-    <header class="border-b border-[#deded8]">
-
-        <div class="max-w-7xl mx-auto px-8 py-6">
-
-            <div class="flex items-center justify-between">
-
-                <div>
-
-                    <p class="font-bold text-xl tracking-tight">
-                        QDesk
-                    </p>
-
-                    <p class="text-sm text-[#777770] mt-1">
-                        {{ event.organization.name }}
-                    </p>
-
+                <div class="public-token">
+                    {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
                 </div>
 
+                {% if token.counter %}
 
-                <div class="text-right">
-
-                    <p class="font-semibold">
-                        {{ event.name }}
+                    <p class="public-counter">
+                        Please go to
+                        <strong>{{ token.counter.name }}</strong>
                     </p>
 
-                    {% if event.location %}
+                {% endif %}
 
-                        <p class="text-sm text-[#777770]">
-                            {{ event.location }}
-                        </p>
+            </div>
 
-                    {% endif %}
+        {% endif %}
 
-                </div>
+    {% empty %}
 
+        <div class="public-current">
+
+            <p class="public-label">
+                Queue
+            </p>
+
+            <div class="public-message">
+                Waiting for the first call
             </div>
 
         </div>
 
-    </header>
+    {% endfor %}
 
 
-    <main class="max-w-7xl mx-auto px-8 py-12">
+    {% if not serving_tokens %}
+
+        <div class="public-current">
+
+            <p class="public-label">
+                Queue
+            </p>
+
+            {% if waiting_tokens %}
+                <div class="public-message">
+                    Please wait for your number
+                </div>
+            {% else %}
+                <div class="public-message">
+                    No customers waiting
+                </div>
+            {% endif %}
+
+        </div>
+
+    {% endif %}
 
 
-        {% include "events/partials/display.html" %}
+    <div class="public-waiting">
+
+        <div>
+            <p class="public-label">
+                Waiting
+            </p>
+
+            <p class="public-help">
+                Please keep your token ready.
+            </p>
+        </div>
 
 
-    </main>
+        <div class="public-token-list">
 
+            {% for token in tokens %}
 
-</body>
+                {% if token.status == "waiting" %}
 
-</html>
+                    <span>
+                        {{ event.token_prefix }}-{{ token.number|stringformat:"03d" }}
+                    </span>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
