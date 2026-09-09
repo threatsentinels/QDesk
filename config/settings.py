@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:8000",
-    "qdesk-q7k7.onrender.com",
+    "https://qdesk-q7k7.onrender.com",
 ]
 
 
