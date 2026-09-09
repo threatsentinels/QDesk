@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "qdesk-q7k7.onrender.com",
+    "https://qdesk-q7k7.onrender.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
