@@ -1,27 +1,91 @@
-**QDesk**
+# QDesk
 
-Standing around in a crowded room wondering which token just got called is pretty annoying. I built QDesk to fix that, making a simple web app for managing lines at events, service desks, pop-up clinics, and offices.
+A simple web-based queue management system for events, offices, service desks, and other places where people have to wait.
 
-You set up an event, issue tokens, call the next person up, and throw a display up on a screen so people actually know where they are in line.
+Made by a frustrated teen who once had to stand in a line with absolutely no idea who was next.
 
-The app supports multiple organizations, events, and counters. Tokens get custom prefixes, automatic numbering, and can be printed out. Staff get a real-time dashboard while visitors see a clean public display in the waiting room. Everything tracks token statuses through waiting, serving, finished, or cancelled, and gives you basic stats on wait times.
+## Features
 
-On the coding paart, I splited the backend into modular Django apps for organizations, events, counters, and tokens instead of stuffing everything into one giant views.py. The backend runs on Python, Django, and SQLite, while the frontend uses Django Templates and Tailwind CSS. HTMX handles the live updates so the page never has to fully reload when a token changes.
+- Generate queue tokens automatically
+- Call the next person in line
+- Assign tokens to service counters
+- Mark tokens as finished
+- Track waiting, serving, and completed tokens
+- Public display for currently serving tokens
+- Printable tokens
+- Basic queue statistics
+- Support for multiple organizations and events
+- Live queue updates
 
-To run it locally:
+## How it works
 
+```
+Organization
+     ↓
+   Event
+     ↓
+  Counters
+     ↓
+   Tokens
+
+A typical flow looks like:
+
+Generate Token → Wait → Called → Go to Counter → Finished text
+```
+
+Tech Stack
+```
+Django
+HTML / CSS
+HTMX
+SQLite
+Pillow
+Gunicorn
+```
+Live Demo
+
+```https://qdesk-q7k7.onrender.com/```
+
+Running Locally
+
+Clone the repository:
+```
 git clone https://github.com/threatsentinels/QDesk.git
 cd QDesk
+```
 
+Create a virtual environment:
+```
 python -m venv venv
-source venv/bin/activate (or venv\Scripts\activate on Windows)
-
+```
+Activate it and install the requirements:
+```
 pip install -r requirements.txt
+```
+Run migrations:
+```
 python manage.py migrate
+```
+Start the server:
+```
 python manage.py runserver
+```
+Then open the local address shown in the terminal.
 
-Then open http://127.0.0.1:8000 in your browser.
+Project Structure
+```
+QDesk/
+├── config/
+├── organizations/
+├── events/
+├── counters/
+├── tokens/
+├── templates/
+├── staticfiles/
+├── manage.py
+└── requirements.txt
+```
 
-You can test the live build at https://qdesk.ggsrclub.com
+Status
 
-Down the road I want to add better auth, real reporting features, multi-counter routing, and cleaner display styles.
+QDesk is an ongoing project. More features and improvements are planned.
