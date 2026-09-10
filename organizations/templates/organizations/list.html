@@ -7,28 +7,22 @@
 <main class="page">
 
     <header class="page-header">
-
         <div>
-            <h1 class="page-title">
-                Organizations
-            </h1>
-
+            <p class="location">QDesk</p>
+            <h1 class="page-title">Organizations</h1>
             <p class="location">
-                Select an organization to manage its events.
+                Choose an organization to view its events.
             </p>
         </div>
 
         <div class="header-actions">
-
             <a
                 href="{% url 'organizations:create' %}"
                 class="btn btn-primary"
             >
                 + New organization
             </a>
-
         </div>
-
     </header>
 
 
@@ -38,12 +32,14 @@
 
             {% for organization in organizations %}
 
-                <section class="card organization-card">
+                <a
+                    href="{% url 'organizations:detail' organization.id %}"
+                    class="card organization-card"
+                >
 
                     <div class="organization-header">
 
                         <div>
-
                             <h2 class="organization-name">
                                 {{ organization.name }}
                             </h2>
@@ -52,104 +48,36 @@
                                 {{ organization.events.count }}
                                 event{{ organization.events.count|pluralize }}
                             </p>
-
                         </div>
 
-
                         {% if organization.logo %}
-
                             <img
                                 src="{{ organization.logo.url }}"
                                 alt="{{ organization.name }}"
                                 class="organization-logo"
                             >
-
                         {% endif %}
 
                     </div>
 
+                    <div class="organization-open">
+                        View events →
+                    </div>
 
-                    {% if organization.events.all %}
-
-                        <div class="organization-events-list">
-
-                            {% for event in organization.events.all %}
-
-                                <a
-                                    href="{% url 'events:detail' event.id %}"
-                                    class="event-row"
-                                >
-
-                                    <div>
-
-                                        <div class="event-name">
-                                            {{ event.name }}
-                                        </div>
-
-                                        {% if event.location %}
-
-                                            <div class="event-location">
-                                                {{ event.location }}
-                                            </div>
-
-                                        {% endif %}
-
-                                    </div>
-
-
-                                    <div class="event-right">
-
-                                        {% if event.is_active %}
-
-                                            <span class="event-active">
-                                                Active
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="event-inactive">
-                                                Inactive
-                                            </span>
-
-                                        {% endif %}
-
-                                        <span class="event-open">
-                                            Open →
-                                        </span>
-
-                                    </div>
-
-                                </a>
-
-                            {% empty %}
-
-                                <div class="organization-empty">
-                                    No events yet.
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-                    {% endif %}
-
-                </section>
+                </a>
 
             {% endfor %}
 
         </div>
 
-
     {% else %}
 
         <section class="card empty-state">
 
-            <h2>
-                No organizations yet
-            </h2>
+            <h2>No organizations yet</h2>
 
             <p>
-                Create your first organization to start managing queues.
+                Create an organization to start adding events.
             </p>
 
             <a
