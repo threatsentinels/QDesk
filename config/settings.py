@@ -26,14 +26,15 @@ SECRET_KEY = "django123secure-!bd@^mu7z(r8*v@(7e5jpd#ms%v3)m2)=2k#d@*vnit9v#&bk3
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "qdesk-q7k7.onrender.com",
+    "qdesk.ggsrclub.com",
     "localhost",
     "127.0.0.1",
-    "https://qdesk-q7k7.onrender.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://localhost:8000",
     "https://qdesk-q7k7.onrender.com",
+    "https://qdesk.ggsrclub.com",
 ]
 
 
