@@ -29,27 +29,17 @@ def organization_detail(request,organization_id):
     )
 
 def create_organization(request):
-    if request.method=="POST":
-        form = OrganizationForm(
-            request.POST,
-            request.FILES,
-        )
+    if request.method == "POST":
+        form = OrganizationForm(request.POST, request.FILES)
 
-    if form.is_valid():
-
-        organization = form.save()
-
-        return redirect(
-            "organizations:detail",
-            organization_id=organization.id,
-        )
+        if form.is_valid():
+            form.save()
+            return redirect("organizations:list")
     else:
         form = OrganizationForm()
 
     return render(
         request,
         "organizations/create.html",
-        {
-            "form":form,
-        },
+        {"form": form},
     )
