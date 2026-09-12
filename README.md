@@ -2,7 +2,7 @@
 
 A simple web-based queue management system for events, offices, service desks, and other places where people have to wait.
 
-Made by a frustrated teen who once had to stand in a line with absolutely no idea who was next.
+
 
 ## Features
 
