@@ -42,9 +42,7 @@ SQLite
 Pillow
 Gunicorn
 ```
-Live Demo
-
-```https://qdesk-q7k7.onrender.com/```
+working site ``` https://dashingdev33.pythonanywhere.com ```
 
 Running Locally
 
