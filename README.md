@@ -70,20 +70,7 @@ python manage.py runserver
 ```
 Then open the local address shown in the terminal.
 
-Project Structure
-```
-QDesk/
-├── config/
-├── organizations/
-├── events/
-├── counters/
-├── tokens/
-├── templates/
-├── staticfiles/
-├── manage.py
-└── requirements.txt
-```
 
 Status
 
-QDesk is an ongoing project. More features and improvements are planned.
+This project is under development. More features and improvements are planned.
