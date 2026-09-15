@@ -17,23 +17,9 @@ A simple web-based queue management system for events, offices, service desks, a
 - Support for multiple organizations and events
 - Live queue updates
 
-## How it works
 
-```
-Organization
-     ↓
-   Event
-     ↓
-  Counters
-     ↓
-   Tokens
 
-A typical flow looks like:
-
-Generate Token → Wait → Called → Go to Counter → Finished text
-```
-
-Tech Stack
+Stack used
 ```
 Django
 HTML / CSS
